@@ -1,12 +1,15 @@
-import { HeroSection } from "./Layout/HeroSection"
+import { FinanceTable } from "./Layout/FinanceTable"
+
+
 
 export const Inicio = () => {
     return (
         <div className=''>
-            
-            <HeroSection/>
 
             
+          
+            <FinanceTable />
+
 
         </div>
     )
