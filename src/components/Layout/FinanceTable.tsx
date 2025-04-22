@@ -29,7 +29,7 @@ export const FinanceTable = () => {
             <td>
               <div className="flex items-center gap-3">
                 <div className="avatar">
-                  <div className="mask mask-squircle h-12 w-12">
+                  <div className="w-12 h-12 mask mask-squircle">
                     <img
                       src="https://img.daisyui.com/images/profile/demo/2@94.webp"
                       alt="Avatar Tailwind CSS Component" />
@@ -48,7 +48,7 @@ export const FinanceTable = () => {
             </td>
             <td>Purple</td>
             <th>
-              <button className="btn btn-ghost btn-xs">details</button>
+              <button className="btn btn-ghost btn-xs">Estadisticas</button>
             </th>
           </tr>
           {/* row 2 */}
@@ -61,7 +61,7 @@ export const FinanceTable = () => {
             <td>
               <div className="flex items-center gap-3">
                 <div className="avatar">
-                  <div className="mask mask-squircle h-12 w-12">
+                  <div className="w-12 h-12 mask mask-squircle">
                     <img
                       src="https://img.daisyui.com/images/profile/demo/3@94.webp"
                       alt="Avatar Tailwind CSS Component" />
@@ -80,7 +80,7 @@ export const FinanceTable = () => {
             </td>
             <td>Red</td>
             <th>
-              <button className="btn btn-ghost btn-xs">details</button>
+              <button className="btn btn-ghost btn-xs">Estadisticas</button>
             </th>
           </tr>
           {/* row 3 */}
@@ -93,7 +93,7 @@ export const FinanceTable = () => {
             <td>
               <div className="flex items-center gap-3">
                 <div className="avatar">
-                  <div className="mask mask-squircle h-12 w-12">
+                  <div className="w-12 h-12 mask mask-squircle">
                     <img
                       src="https://img.daisyui.com/images/profile/demo/4@94.webp"
                       alt="Avatar Tailwind CSS Component" />
@@ -112,7 +112,7 @@ export const FinanceTable = () => {
             </td>
             <td>Crimson</td>
             <th>
-              <button className="btn btn-ghost btn-xs">details</button>
+              <button className="btn btn-ghost btn-xs">Estadisticas</button>
             </th>
           </tr>
           {/* row 4 */}
@@ -125,7 +125,7 @@ export const FinanceTable = () => {
             <td>
               <div className="flex items-center gap-3">
                 <div className="avatar">
-                  <div className="mask mask-squircle h-12 w-12">
+                  <div className="w-12 h-12 mask mask-squircle">
                     <img
                       src="https://img.daisyui.com/images/profile/demo/5@94.webp"
                       alt="Avatar Tailwind CSS Component" />
@@ -144,7 +144,7 @@ export const FinanceTable = () => {
             </td>
             <td>Indigo</td>
             <th>
-              <button className="btn btn-ghost btn-xs">details</button>
+              <button className="btn btn-ghost btn-xs">Estadisticas</button>
             </th>
           </tr>
         </tbody>
