@@ -26,14 +26,14 @@ export const Navbarr = () => {
                                 <li><a>Submenu 2</a></li>
                             </ul>
                         </li>
-                        <li><a>Item 3</a></li>
+                        <li><NavLink to="/FinanceTable"></NavLink>FinanceTable</li>
                     </ul>
                 </div>
                 <a className="text-xl btn btn-ghost">daisyUI</a>
             </div>
             <div className="hidden navbar-center lg:flex">
                 <ul className="px-1 menu menu-horizontal">
-                <li><NavLink to="/inicio"></NavLink>Inicio</li>
+                    <li><NavLink to="/inicio"></NavLink>Inicio</li>
                     <li>
                         <details>
                             <summary>Parent</summary>
@@ -43,7 +43,7 @@ export const Navbarr = () => {
                             </ul>
                         </details>
                     </li>
-                    <li><NavLink to="/FinanceTable"></NavLink>FinanceTable</li>
+                    <li><NavLink to="/finance"></NavLink>FinanceTable</li>
                 </ul>
             </div>
             <div className="navbar-end">
