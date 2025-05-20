@@ -1,5 +1,5 @@
 // src/components/FinanceTable.tsx
-import React from 'react';
+
 
 type PortfolioItem = {
   id: number;
