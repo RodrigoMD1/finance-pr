@@ -14,15 +14,11 @@ type FinanceTableProps = {
 };
 
 export const FinanceTable = ({ items, onDeleteItem }: FinanceTableProps) => {
-  const userName = localStorage.getItem('userName');
+
 
   return (
     <div className="overflow-x-auto">
-      {userName && (
-        <div className="mb-4 alert alert-info">
-          <span>Conectado como: <strong>{userName}</strong></span>
-        </div>
-      )}
+     
       <table className="table">
         <thead>
           <tr>

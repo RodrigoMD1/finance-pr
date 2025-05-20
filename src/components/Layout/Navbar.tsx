@@ -54,7 +54,9 @@ export const Navbarr = ({
       </div>
       <div className="flex items-center gap-2 navbar-end">
         {isLoggedIn && userName && (
-          <span className="text-sm text-primary">Hola, <strong>{userName}</strong></span>
+          <span className="px-3 py-1 text-sm rounded alert alert-info">
+            Conectado como: <strong>{userName}</strong>
+          </span>
         )}
         {isLoggedIn ? (
           <a className="btn" onClick={onLogoutClick}>Cerrar Sesión</a>
