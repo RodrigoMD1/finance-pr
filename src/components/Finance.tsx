@@ -1,5 +1,4 @@
-import  { useEffect, useState } from 'react';
-import { ControlPanel } from './ControlPanel';
+import { useEffect, useState } from 'react';
 import { FinanceTable } from './FinanceTable';
 
 type PortfolioItem = {
@@ -13,50 +12,60 @@ type PortfolioItem = {
 export const Finance = () => {
   const [portfolio, setPortfolio] = useState<PortfolioItem[]>([]);
 
-  // Recuperar datos desde localStorage al cargar la página
   useEffect(() => {
-    const stored = localStorage.getItem('portfolio');
-    if (stored) {
-      console.log('Datos recuperados de localStorage:', stored); // Depuración
-      setPortfolio(JSON.parse(stored));
-    } else {
-      console.log('No se encontraron datos en localStorage'); // Depuración
-    }
+    const fetchPortfolio = async () => {
+      const userId = localStorage.getItem('userId');
+      const token = localStorage.getItem('token');
+      if (!userId || !token) return;
+      const res = await fetch(`https://proyecto-inversiones.onrender.com/api/portfolio/${userId}`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      if (res.ok) {
+        const data = await res.json();
+        // Verifica si data es un array antes de mapear
+        if (Array.isArray(data)) {
+          const mapped = data.map((item: {
+            id: number;
+            name: string;
+            quantity: number;
+            purchase_price: number;
+            type: string;
+          }) => ({
+            id: item.id,
+            nombre: item.name,
+            cantidad: item.quantity,
+            precio: item.purchase_price,
+            tipoActivo: item.type,
+          }));
+          setPortfolio(mapped);
+        } else if (data) {
+          // Si es un solo objeto
+          const mapped = [{
+            id: data.id,
+            nombre: data.name,
+            cantidad: data.quantity,
+            precio: data.purchase_price,
+            tipoActivo: data.type,
+          }];
+          setPortfolio(mapped);
+        } else {
+          setPortfolio([]);
+        }
+      }
+    };
+    fetchPortfolio();
   }, []);
 
-  // Guardar los datos en localStorage cada vez que cambie el estado del portafolio
-  useEffect(() => {
-    if (portfolio.length > 0) {
-      console.log('Guardando en localStorage:', portfolio); // Depuración
-      localStorage.setItem('portfolio', JSON.stringify(portfolio));
-    }
-  }, [portfolio]);
-
-  // Función para agregar un ítem al portafolio
-  const handleAddItem = (item: PortfolioItem) => {
-    console.log('Agregando item:', item); // Depuración
-    setPortfolio((prev) => {
-      const updatedPortfolio = [...prev, item];
-      return updatedPortfolio;
+  const handleDeleteItem = async (id: number) => {
+    const token = localStorage.getItem('token');
+    await fetch(`https://proyecto-inversiones.onrender.com/api/portfolio/item/${id}`, {
+      method: 'DELETE',
+      headers: { Authorization: `Bearer ${token}` }
     });
-  };
-
-  // Función para eliminar un ítem del portafolio
-  const handleDeleteItem = (id: number) => {
-    setPortfolio((prev) => {
-      const updatedPortfolio = prev.filter((item) => item.id !== id);
-      return updatedPortfolio;
-    });
+    setPortfolio(portfolio.filter(item => item.id !== id));
   };
 
   return (
-    <div className="p-4">
-      <h2 className="mb-4 text-2xl font-bold">Mi Portafolio</h2>
-      <ControlPanel onAddItem={handleAddItem} />
-      <FinanceTable
-        items={portfolio}
-        onDeleteItem={handleDeleteItem}
-      />
-    </div>
+    <FinanceTable items={portfolio} onDeleteItem={handleDeleteItem} />
   );
 };
