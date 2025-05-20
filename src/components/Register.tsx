@@ -17,7 +17,7 @@ export const Register = ({ onRegisterSuccess }: { onRegisterSuccess: () => void 
       return;
     }
     try {
-      const res = await fetch('https://proyecto-inversiones.onrender.com/api/register', {
+      const res = await fetch('https://proyecto-inversiones.onrender.com/api/auth/registro', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ name, email, password }),
