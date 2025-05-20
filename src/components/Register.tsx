@@ -41,7 +41,7 @@ export const Register = ({ onRegisterSuccess }: { onRegisterSuccess: () => void 
 
   return (
     <form onSubmit={handleSubmit} className="flex flex-col max-w-xs gap-4 mx-auto">
-      <fieldset className="p-4 border fieldset w-xs bg-base-200 border-base-300 rounded-box">
+      <fieldset className="p-4 border fieldset w-xs border-base-300 rounded-box">
         <legend className="fieldset-legend">Registro</legend>
         <label className="fieldset-label">Nombre</label>
         <input
