@@ -12,15 +12,24 @@ export const MisRutas = () => {
     const [showAuth, setShowAuth] = useState(false);
     const [authView, setAuthView] = useState<'login' | 'register'>('login');
 
+    // Función para cerrar sesión
+    const handleLogout = () => {
+        localStorage.clear();
+        window.location.reload();
+    };
+
     return (
         <BrowserRouter>
             <HeroSection />
-            <Navbarr onLoginClick={() => { setShowAuth(true); setAuthView('login'); }} />
+            <Navbarr
+                onLoginClick={() => { setShowAuth(true); setAuthView('login'); }}
+                onLogoutClick={handleLogout}
+            />
 
             {/* Modal de autenticación */}
             {showAuth && (
                 <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40">
-                    <div className="bg-white p-8 rounded shadow-lg min-w-[320px]">
+                    <div className="bg-gray-500 p-8 rounded shadow-lg min-w-[320px]">
                         {authView === 'login' ? (
                             <>
                                 <Login onLoginSuccess={() => setShowAuth(false)} />
