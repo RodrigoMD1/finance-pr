@@ -1,18 +1,52 @@
-import React from 'react'
+import React, { useState } from 'react';
 
-export const Login = () => {
+export function Login({ onLoginSuccess }: { onLoginSuccess: () => void }) {
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [error, setError] = useState('');
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setError('');
+    try {
+      const res = await fetch('https://proyecto-inversiones.onrender.com/api/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password }),
+      });
+      const data = await res.json();
+      if (res.ok) {
+        localStorage.setItem('token', data.token);
+        localStorage.setItem('userId', data.userId);
+        onLoginSuccess();
+      } else {
+        setError(data.message || 'Error al iniciar sesión');
+      }
+    } catch {
+      setError('Error de conexión');
+    }
+  };
+
   return (
-    <fieldset className="p-4 border fieldset w-xs bg-base-200 border-base-300 rounded-box ">
-      <legend className="fieldset-legend">Login</legend>
-
-      <label className="fieldset-label">Email</label>
-      <input type="email" className="input" placeholder="Email" />
-
-      <label className="fieldset-label">Password</label>
-      <input type="password" className="input" placeholder="Password" />
-
-      <button className="mt-4 btn btn-neutral">Login</button>
-      <button className="mt-4 btn btn-neutral">Register</button>
-    </fieldset>
-  )
+    <form onSubmit={handleSubmit} className="flex flex-col max-w-xs gap-4 mx-auto">
+      <input
+        type="email"
+        placeholder="Correo"
+        value={email}
+        onChange={e => setEmail(e.target.value)}
+        required
+        className="input input-bordered"
+      />
+      <input
+        type="password"
+        placeholder="Contraseña"
+        value={password}
+        onChange={e => setPassword(e.target.value)}
+        required
+        className="input input-bordered"
+      />
+      {error && <div className="text-red-500">{error}</div>}
+      <button className="btn btn-primary" type="submit">Iniciar sesión</button>
+    </form>
+  );
 }

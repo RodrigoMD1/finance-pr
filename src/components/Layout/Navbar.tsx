@@ -1,11 +1,6 @@
-
-//TODO HACER FUNCIONAR EL BOTON DE REGISTER DENTRO DEL FORMULARIO LOGIN 
-
 import { NavLink } from "react-router-dom";
 
-
-
-export const Navbarr = () => {
+export const Navbarr = ({ onLoginClick }: { onLoginClick: () => void }) => {
     return (
         <div className="shadow-sm navbar bg-base-300 rounded-box">
             <div className="navbar-start">
@@ -18,22 +13,24 @@ export const Navbarr = () => {
                     <ul
                         tabIndex={0}
                         className="p-2 mt-3 shadow menu menu-sm dropdown-content bg-base-100 rounded-box z-1 w-52">
-                        <li><NavLink to="/inicio"></NavLink>Inicio</li>
+                        <li><NavLink to="/inicio">Inicio</NavLink></li>
                         <li>
-                            <a>Parent</a>
-                            <ul className="p-2">
-                                <li><a>Submenu 1</a></li>
-                                <li><a>Submenu 2</a></li>
-                            </ul>
+                            <details>
+                                <summary>Parent</summary>
+                                <ul className="p-2">
+                                    <li><a>Submenu 1</a></li>
+                                    <li><a>Submenu 2</a></li>
+                                </ul>
+                            </details>
                         </li>
-                        <li><NavLink to="/FinanceTable"></NavLink>FinanceTable</li>
+                        <li><NavLink to="/FinanceTable">FinanceTable</NavLink></li>
                     </ul>
                 </div>
                 <a className="text-xl btn btn-ghost">daisyUI</a>
             </div>
             <div className="hidden navbar-center lg:flex">
                 <ul className="px-1 menu menu-horizontal">
-                    <li><NavLink to="/inicio"></NavLink>Inicio</li>
+                    <li><NavLink to="/inicio">Inicio</NavLink></li>
                     <li>
                         <details>
                             <summary>Parent</summary>
@@ -43,14 +40,11 @@ export const Navbarr = () => {
                             </ul>
                         </details>
                     </li>
-                    <li><NavLink to="/finance"></NavLink>FinanceTable</li>
+                    <li><NavLink to="/finance">FinanceTable</NavLink></li>
                 </ul>
             </div>
             <div className="navbar-end">
-                <a className="btn">Iniciar Sesión</a>
-
-
-
+                <a className="btn" onClick={onLoginClick}>Iniciar Sesión</a>
             </div>
         </div>
     );

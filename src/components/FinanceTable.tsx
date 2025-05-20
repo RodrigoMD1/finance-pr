@@ -22,7 +22,7 @@ export const FinanceTable = ({ items, onDeleteItem }: FinanceTableProps) => {
         <thead>
           <tr>
             <th>Name</th>
-            <th>Cantidad</th>
+            <th>Cantidad</th> 
             <th>Precio</th>
             <th>Tipo de Activo</th>
             <th>Total</th>
