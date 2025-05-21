@@ -32,7 +32,7 @@ export const Navbarr = ({
                 </ul>
               </details>
             </li>
-            <li><NavLink to="/FinanceTable">FinanceTable</NavLink></li>
+            <li><NavLink to="/finance">FinanceTable</NavLink></li>
           </ul>
         </div>
         <a className="text-xl btn btn-ghost">daisyUI</a>
