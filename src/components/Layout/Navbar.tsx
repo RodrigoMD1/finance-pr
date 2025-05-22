@@ -8,7 +8,10 @@ export const Navbarr = ({
   onLogoutClick: () => void;
 }) => {
   const isLoggedIn = !!localStorage.getItem('token');
-  const userName = localStorage.getItem('userName');
+  const name = localStorage.getItem('userName');
+
+  console.log({isLoggedIn, name});
+  
 
   return (
     <div className="shadow-sm navbar bg-base-300 rounded-box">
@@ -53,11 +56,11 @@ export const Navbarr = ({
         </ul>
       </div>
       <div className="flex items-center gap-2 navbar-end">
-        {isLoggedIn && userName && (
+        {isLoggedIn && name ? (
           <span className="px-3 py-1 text-sm rounded alert alert-info">
-            Conectado como: <strong>{userName}</strong>
+            Conectado como: <strong>{name}</strong>
           </span>
-        )}
+        ) : null}
         {isLoggedIn ? (
           <a className="btn" onClick={onLogoutClick}>Cerrar Sesión</a>
         ) : (

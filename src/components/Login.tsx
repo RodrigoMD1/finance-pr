@@ -15,9 +15,13 @@ export function Login({ onLoginSuccess }: { onLoginSuccess: () => void }) {
         body: JSON.stringify({ email, password }),
       });
       const data = await res.json();
+      console.log({ data });
       if (res.ok) {
         localStorage.setItem('token', data.token);
-        localStorage.setItem('userId', data.userId);
+        localStorage.setItem('userId', data.id);
+        localStorage.setItem('userName', data.name);
+        localStorage.setItem('userEmail', data.email);
+        localStorage.setItem('userRole', data.role);
         onLoginSuccess();
       } else {
         setError(data.message || 'Error al iniciar sesión');

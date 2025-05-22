@@ -1,4 +1,4 @@
-
+import { ControlPanel } from "./ControlPanel";
 
 type PortfolioItem = {
   id: number;
@@ -11,14 +11,13 @@ type PortfolioItem = {
 type FinanceTableProps = {
   items: PortfolioItem[];
   onDeleteItem: (id: number) => void;
+  onAddItem: (item: Omit<PortfolioItem, 'id'>) => void;
 };
 
-export const FinanceTable = ({ items, onDeleteItem }: FinanceTableProps) => {
-
-
+export const FinanceTable = ({ items, onDeleteItem, onAddItem }: FinanceTableProps) => {
   return (
     <div className="overflow-x-auto">
-     
+      <ControlPanel onAddItem={onAddItem} />
       <table className="table">
         <thead>
           <tr>

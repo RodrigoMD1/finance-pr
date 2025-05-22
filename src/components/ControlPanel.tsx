@@ -1,4 +1,3 @@
-// src/components/ControlPanel.tsx
 import React, { useState } from 'react';
 
 type PortfolioItem = {
@@ -10,7 +9,8 @@ type PortfolioItem = {
 };
 
 type ControlPanelProps = {
-  onAddItem: (item: PortfolioItem) => void;
+  // Ahora acepta un item sin id, el id lo pone el backend
+  onAddItem: (item: Omit<PortfolioItem, 'id'>) => void;
 };
 
 export const ControlPanel: React.FC<ControlPanelProps> = ({ onAddItem }) => {
@@ -28,8 +28,8 @@ export const ControlPanel: React.FC<ControlPanelProps> = ({ onAddItem }) => {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
-    const nuevoItem: PortfolioItem = {
-      id: Date.now(),
+    // No generes el id aquí, el backend lo genera
+    const nuevoItem = {
       nombre: form.nombre,
       cantidad: parseFloat(form.cantidad),
       precio: parseFloat(form.precio),
@@ -47,7 +47,7 @@ export const ControlPanel: React.FC<ControlPanelProps> = ({ onAddItem }) => {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="grid grid-cols-1 gap-4 mb-6 md:grid-cols-2">
+    <form onSubmit={handleSubmit} className="grid grid-cols-1 gap-4 m-5 mb-6 md:grid-cols-2">
       <input
         type="text"
         name="nombre"

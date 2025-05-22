@@ -8,6 +8,7 @@ import { Login } from '../components/Login';
 import { Register } from '../components/Register';
 import { Finance } from '../components/Finance';
 
+
 export const MisRutas = () => {
     const [showAuth, setShowAuth] = useState(false);
     const [authView, setAuthView] = useState<'login' | 'register'>('login');
@@ -56,6 +57,7 @@ export const MisRutas = () => {
                 <Route path='/' element={<Inicio />} />
                 <Route path='/inicio' element={<Inicio />} />
                 <Route path='/finance' element={<Finance />} />
+                
                 <Route
                     path="*"
                     element={

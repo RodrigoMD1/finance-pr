@@ -17,20 +17,14 @@ export const Finance = () => {
       const userId = localStorage.getItem('userId');
       const token = localStorage.getItem('token');
       if (!userId || !token) return;
-      const res = await fetch(`https://proyecto-inversiones.onrender.com/api/portfolio/${userId}`, {
+      const res = await fetch(`https://proyecto-inversiones.onrender.com/api/portfolio/user/${userId}`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       if (res.ok) {
         const data = await res.json();
-        // Verifica si data es un array antes de mapear
         if (Array.isArray(data)) {
-          const mapped = data.map((item: {
-            id: number;
-            name: string;
-            quantity: number;
-            purchase_price: number;
-            type: string;
-          }) => ({
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          const mapped = data.map((item: any) => ({
             id: item.id,
             nombre: item.name,
             cantidad: item.quantity,
@@ -38,8 +32,7 @@ export const Finance = () => {
             tipoActivo: item.type,
           }));
           setPortfolio(mapped);
-        } else if (data) {
-          // Si es un solo objeto
+        } else if (data && data.id) {
           const mapped = [{
             id: data.id,
             nombre: data.name,
@@ -58,14 +51,57 @@ export const Finance = () => {
 
   const handleDeleteItem = async (id: number) => {
     const token = localStorage.getItem('token');
-    await fetch(`https://proyecto-inversiones.onrender.com/api/portfolio/item/${id}`, {
+    const res = await fetch(`https://proyecto-inversiones.onrender.com/api/portfolio/item/${id}`, {
       method: 'DELETE',
       headers: { Authorization: `Bearer ${token}` }
     });
-    setPortfolio(portfolio.filter(item => item.id !== id));
+    if (res.ok) {
+      setPortfolio(portfolio.filter(item => item.id !== id));
+    }
+  };
+
+  // Handler para agregar un nuevo ítem al portfolio (POST al backend)
+  const handleAddItem = async (item: Omit<PortfolioItem, 'id'>) => {
+    const userId = localStorage.getItem('userId');
+    const token = localStorage.getItem('token');
+    if (!userId || !token) return;
+
+    const res = await fetch('https://proyecto-inversiones.onrender.com/api/portfolio', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`
+      },
+      body: JSON.stringify({
+        name: item.nombre,
+        description: item.nombre, // O pide el campo en el formulario y pásalo aquí
+        quantity: item.cantidad,
+        purchase_price: item.precio,
+        type: item.tipoActivo,
+        user_id: userId
+      }),
+    });
+
+    if (res.ok) {
+      const newItem = await res.json();
+      setPortfolio(prev => [
+        ...prev,
+        {
+          id: newItem.id,
+          nombre: newItem.name,
+          cantidad: newItem.quantity,
+          precio: newItem.purchase_price,
+          tipoActivo: newItem.type,
+        }
+      ]);
+    }
   };
 
   return (
-    <FinanceTable items={portfolio} onDeleteItem={handleDeleteItem} />
+    <FinanceTable
+      items={portfolio}
+      onDeleteItem={handleDeleteItem}
+      onAddItem={handleAddItem}
+    />
   );
 };
