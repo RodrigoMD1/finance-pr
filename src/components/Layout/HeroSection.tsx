@@ -1,23 +1,18 @@
-
 export const HeroSection = () => {
   return (
     <div>
-
-
-
-<div className="hero  min-h-screen">
-  <div className="hero-content text-center">
-    <div className="max-w-md">
-      <h1 className="text-5xl font-bold">Hello there</h1>
-      <p className="py-6">
-        Provident cupiditate voluptatem et in. Quaerat fugiat ut assumenda excepturi exercitationem
-        quasi. In deleniti eaque aut repudiandae et a id nisi.
-      </p>
-      <button className="btn btn-primary">Get Started</button>
-    </div>
-  </div>
-</div>
-
+      <div className="min-h-screen hero">
+        <div className="text-center hero-content">
+          <div className="max-w-md">
+            <h1 className="text-5xl font-bold">Controla tus finanzas</h1>
+            <p className="py-6">
+              Lleva el control de tus ingresos y gastos, visualiza reportes claros y toma mejores decisiones financieras.
+              Simplifica tu economía personal o de tu negocio con nuestra plataforma fácil de usar.
+            </p>
+            <button className="btn btn-primary">Comenzar ahora</button>
+          </div>
+        </div>
+      </div>
     </div>
   )
 }

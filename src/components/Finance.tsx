@@ -2,7 +2,11 @@ import { useEffect, useState } from 'react';
 import { FinanceTable } from './FinanceTable';
 import { PortfolioItem } from "../types/PortfolioItem";
 
-
+// Función global de logout
+function logout() {
+  localStorage.clear();
+  window.location.reload(); 
+}
 
 export const Finance = () => {
   const [portfolio, setPortfolio] = useState<PortfolioItem[]>([]);
@@ -15,6 +19,10 @@ export const Finance = () => {
       const res = await fetch(`https://proyecto-inversiones.onrender.com/api/portfolio/user/${userId}`, {
         headers: { Authorization: `Bearer ${token}` }
       });
+      if (res.status === 401 || res.status === 403) {
+        logout();
+        return;
+      }
       if (res.ok) {
         const data = await res.json();
         if (Array.isArray(data)) {
@@ -25,7 +33,7 @@ export const Finance = () => {
             cantidad: item.quantity,
             precio: item.purchase_price,
             tipoActivo: item.type,
-            fechaCompra: item.purchase_date || new Date().toISOString(), // Usa el campo del backend o la fecha actual
+            fechaCompra: item.purchase_date || new Date().toISOString(),
           }));
           setPortfolio(mapped);
         } else if (data && data.id) {
@@ -52,12 +60,15 @@ export const Finance = () => {
       method: 'DELETE',
       headers: { Authorization: `Bearer ${token}` }
     });
+    if (res.status === 401 || res.status === 403) {
+      logout();
+      return;
+    }
     if (res.ok) {
       setPortfolio(portfolio.filter(item => item.id !== id));
     }
   };
 
-  // Handler para agregar un nuevo ítem al portfolio (POST al backend)
   const handleAddItem = async (item: Omit<PortfolioItem, 'id'>) => {
     const userId = localStorage.getItem('userId');
     const token = localStorage.getItem('token');
@@ -71,14 +82,19 @@ export const Finance = () => {
       },
       body: JSON.stringify({
         name: item.nombre,
-        description: item.nombre, // O pide el campo en el formulario y pásalo aquí
+        description: item.nombre,
         quantity: item.cantidad,
         purchase_price: item.precio,
         type: item.tipoActivo,
         user_id: userId,
-        purchase_date: item.fechaCompra || new Date().toISOString(), // Envía la fecha de compra
+        purchase_date: item.fechaCompra || new Date().toISOString(),
       }),
     });
+
+    if (res.status === 401 || res.status === 403) {
+      logout();
+      return;
+    }
 
     if (res.ok) {
       const newItem = await res.json();
