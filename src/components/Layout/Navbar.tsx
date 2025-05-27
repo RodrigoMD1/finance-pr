@@ -10,8 +10,8 @@ export const Navbarr = ({
   const isLoggedIn = !!localStorage.getItem('token');
   const name = localStorage.getItem('userName');
 
-  console.log({isLoggedIn, name});
-  
+  console.log({ isLoggedIn, name });
+
 
   return (
     <div className="shadow-sm navbar bg-base-300 rounded-box">
@@ -61,6 +61,11 @@ export const Navbarr = ({
             Conectado como: <strong>{name}</strong>
           </span>
         ) : null}
+        {isLoggedIn && (
+          <NavLink to="/stadistics" className="btn btn-info">
+            Estadísticas
+          </NavLink>
+        )}
         {isLoggedIn ? (
           <a className="btn" onClick={onLogoutClick}>Cerrar Sesión</a>
         ) : (

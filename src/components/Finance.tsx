@@ -1,13 +1,8 @@
 import { useEffect, useState } from 'react';
 import { FinanceTable } from './FinanceTable';
+import { PortfolioItem } from "../types/PortfolioItem";
 
-type PortfolioItem = {
-  id: number;
-  nombre: string;
-  cantidad: number;
-  precio: number;
-  tipoActivo: string;
-};
+
 
 export const Finance = () => {
   const [portfolio, setPortfolio] = useState<PortfolioItem[]>([]);
@@ -30,6 +25,7 @@ export const Finance = () => {
             cantidad: item.quantity,
             precio: item.purchase_price,
             tipoActivo: item.type,
+            fechaCompra: item.purchase_date || new Date().toISOString(), // Usa el campo del backend o la fecha actual
           }));
           setPortfolio(mapped);
         } else if (data && data.id) {
@@ -39,6 +35,7 @@ export const Finance = () => {
             cantidad: data.quantity,
             precio: data.purchase_price,
             tipoActivo: data.type,
+            fechaCompra: data.purchase_date || new Date().toISOString(),
           }];
           setPortfolio(mapped);
         } else {
@@ -78,7 +75,8 @@ export const Finance = () => {
         quantity: item.cantidad,
         purchase_price: item.precio,
         type: item.tipoActivo,
-        user_id: userId
+        user_id: userId,
+        purchase_date: item.fechaCompra || new Date().toISOString(), // Envía la fecha de compra
       }),
     });
 
@@ -92,6 +90,7 @@ export const Finance = () => {
           cantidad: newItem.quantity,
           precio: newItem.purchase_price,
           tipoActivo: newItem.type,
+          fechaCompra: newItem.purchase_date || new Date().toISOString(),
         }
       ]);
     }

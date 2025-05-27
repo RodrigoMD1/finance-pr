@@ -7,6 +7,7 @@ import { useState } from 'react';
 import { Login } from '../components/Login';
 import { Register } from '../components/Register';
 import { Finance } from '../components/Finance';
+import { Stadistics } from '../components/Stadistics';
 
 
 export const MisRutas = () => {
@@ -57,7 +58,8 @@ export const MisRutas = () => {
                 <Route path='/' element={<Inicio />} />
                 <Route path='/inicio' element={<Inicio />} />
                 <Route path='/finance' element={<Finance />} />
-                
+                <Route path='/stadistics' element={<Stadistics />} />
+
                 <Route
                     path="*"
                     element={

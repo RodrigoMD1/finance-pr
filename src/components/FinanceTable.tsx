@@ -1,12 +1,6 @@
 import { ControlPanel } from "./ControlPanel";
 
-type PortfolioItem = {
-  id: number;
-  nombre: string;
-  cantidad: number;
-  precio: number;
-  tipoActivo: string;
-};
+import { PortfolioItem } from "../types/PortfolioItem";
 
 type FinanceTableProps = {
   items: PortfolioItem[];
@@ -23,7 +17,8 @@ export const FinanceTable = ({ items, onDeleteItem, onAddItem }: FinanceTablePro
           <tr>
             <th>Nombre</th>
             <th>Cantidad</th>
-            <th>Precio</th>
+            <th>Precio de Compra</th>
+            <th>Fecha y Hora de Compra</th>
             <th>Tipo de Activo</th>
             <th>Total</th>
             <th>Acciones</th>
@@ -32,7 +27,7 @@ export const FinanceTable = ({ items, onDeleteItem, onAddItem }: FinanceTablePro
         <tbody>
           {items.length === 0 ? (
             <tr>
-              <td colSpan={6} className="text-center text-gray-500">
+              <td colSpan={7} className="text-center text-gray-500">
                 No hay datos para mostrar.
               </td>
             </tr>
@@ -40,10 +35,31 @@ export const FinanceTable = ({ items, onDeleteItem, onAddItem }: FinanceTablePro
             items.map((item) => (
               <tr key={item.id}>
                 <td>{item.nombre}</td>
-                <td>{item.cantidad}</td>
-                <td>{item.precio}</td>
+                <td>
+                  {Number(item.cantidad).toLocaleString('es-AR')}
+                </td>
+                <td>
+                  ${Number(item.precio).toLocaleString('es-AR', {
+                    minimumFractionDigits: 2,
+                    maximumFractionDigits: 2,
+                  })}
+                </td>
+                <td>
+                  {new Date(item.fechaCompra).toLocaleString('es-AR', {
+                    year: 'numeric',
+                    month: '2-digit',
+                    day: '2-digit',
+                    hour: '2-digit',
+                    minute: '2-digit',
+                  })}
+                </td>
                 <td>{item.tipoActivo}</td>
-                <td>{(item.cantidad * item.precio).toFixed(2)}</td>
+                <td>
+                  ${(item.cantidad * item.precio).toLocaleString('es-AR', {
+                    minimumFractionDigits: 2,
+                    maximumFractionDigits: 2,
+                  })}
+                </td>
                 <td>
                   <button
                     className="btn btn-danger btn-xs"

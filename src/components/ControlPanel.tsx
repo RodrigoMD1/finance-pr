@@ -1,15 +1,7 @@
 import React, { useState } from 'react';
-
-type PortfolioItem = {
-  id: number;
-  nombre: string;
-  cantidad: number;
-  precio: number;
-  tipoActivo: string;
-};
+import { PortfolioItem } from "../types/PortfolioItem"; // Usa SIEMPRE el import
 
 type ControlPanelProps = {
-  // Ahora acepta un item sin id, el id lo pone el backend
   onAddItem: (item: Omit<PortfolioItem, 'id'>) => void;
 };
 
@@ -28,12 +20,13 @@ export const ControlPanel: React.FC<ControlPanelProps> = ({ onAddItem }) => {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
-    // No generes el id aquí, el backend lo genera
     const nuevoItem = {
       nombre: form.nombre,
       cantidad: parseFloat(form.cantidad),
       precio: parseFloat(form.precio),
       tipoActivo: form.tipoActivo,
+      // Si tu tipo Omit<PortfolioItem, 'id'> requiere fechaCompra, agrégala aquí:
+      fechaCompra: new Date().toISOString(),
     };
 
     onAddItem(nuevoItem);
@@ -83,7 +76,7 @@ export const ControlPanel: React.FC<ControlPanelProps> = ({ onAddItem }) => {
         required
       >
         <option value="">Seleccionar tipo</option>
-        <option value="Acción">Acción</option>
+        <option value="Acción">Acciónes</option>
         <option value="Criptomoneda">Criptomoneda</option>
         <option value="Otro">Otro</option>
       </select>
