@@ -1,13 +1,32 @@
 import React, { useState } from 'react';
 import { PortfolioItem } from "../types/PortfolioItem";
-import panelImg from '../assets/img/finance55.jpg'; 
+import panelImg from '../assets/img/finance55.jpg';
+
 type ControlPanelProps = {
   onAddItem: (item: Omit<PortfolioItem, 'id'>) => void;
 };
 
+const TICKERS = [
+  { value: '', label: 'Seleccionar ticker' },
+  { value: 'AAPL', label: 'Apple (AAPL)' },
+  { value: 'TSLA', label: 'Tesla (TSLA)' },
+  { value: 'GOOGL', label: 'Google (GOOGL)' },
+  { value: 'MSFT', label: 'Microsoft (MSFT)' },
+  { value: 'AMZN', label: 'Amazon (AMZN)' },
+  // Agrega más si lo deseas
+];
+
+const CRYPTOS = [
+  { value: '', label: 'Seleccionar cripto' },
+  { value: 'bitcoin', label: 'Bitcoin' },
+  { value: 'ethereum', label: 'Ethereum' },
+  // Agrega más si lo deseas
+];
+
 export const ControlPanel: React.FC<ControlPanelProps> = ({ onAddItem }) => {
   const [form, setForm] = useState({
     nombre: '',
+    ticker: '',
     cantidad: '',
     precio: '',
     tipoActivo: '',
@@ -22,6 +41,7 @@ export const ControlPanel: React.FC<ControlPanelProps> = ({ onAddItem }) => {
 
     const nuevoItem = {
       nombre: form.nombre,
+      ticker: form.ticker,
       cantidad: parseFloat(form.cantidad),
       precio: parseFloat(form.precio),
       tipoActivo: form.tipoActivo,
@@ -32,6 +52,7 @@ export const ControlPanel: React.FC<ControlPanelProps> = ({ onAddItem }) => {
 
     setForm({
       nombre: '',
+      ticker: '',
       cantidad: '',
       precio: '',
       tipoActivo: '',
@@ -55,6 +76,47 @@ export const ControlPanel: React.FC<ControlPanelProps> = ({ onAddItem }) => {
           className="w-full input input-bordered"
           required
         />
+
+        {form.tipoActivo === "Acción" && (
+          <select
+            name="ticker"
+            value={form.ticker}
+            onChange={handleChange}
+            className="w-full select select-bordered"
+            required
+          >
+            {TICKERS.map(ticker => (
+              <option key={ticker.value} value={ticker.value}>{ticker.label}</option>
+            ))}
+          </select>
+        )}
+
+        {form.tipoActivo === "Criptomoneda" && (
+          <select
+            name="ticker"
+            value={form.ticker}
+            onChange={handleChange}
+            className="w-full select select-bordered"
+            required
+          >
+            {CRYPTOS.map(crypto => (
+              <option key={crypto.value} value={crypto.value}>{crypto.label}</option>
+            ))}
+          </select>
+        )}
+
+        {(form.tipoActivo === "Otro" || !form.tipoActivo) && (
+          <input
+            type="text"
+            name="ticker"
+            placeholder="Ticker o identificador"
+            value={form.ticker}
+            onChange={handleChange}
+            className="w-full input input-bordered"
+            disabled
+          />
+        )}
+
         <input
           type="number"
           name="cantidad"
@@ -81,7 +143,7 @@ export const ControlPanel: React.FC<ControlPanelProps> = ({ onAddItem }) => {
           required
         >
           <option value="">Seleccionar tipo</option>
-          <option value="Acción">Acciónes</option>
+          <option value="Acción">Acción</option>
           <option value="Criptomoneda">Criptomoneda</option>
           <option value="Otro">Otro</option>
         </select>

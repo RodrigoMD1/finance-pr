@@ -5,7 +5,7 @@ import { PortfolioItem } from "../types/PortfolioItem";
 // Función global de logout
 function logout() {
   localStorage.clear();
-  window.location.reload(); 
+  window.location.reload();
 }
 
 export const Finance = () => {
@@ -30,6 +30,7 @@ export const Finance = () => {
           const mapped = data.map((item: any) => ({
             id: item.id,
             nombre: item.name,
+            ticker: item.ticker, // <-- Agregado
             cantidad: item.quantity,
             precio: item.purchase_price,
             tipoActivo: item.type,
@@ -40,6 +41,7 @@ export const Finance = () => {
           const mapped = [{
             id: data.id,
             nombre: data.name,
+            ticker: data.ticker, // <-- Agregado
             cantidad: data.quantity,
             precio: data.purchase_price,
             tipoActivo: data.type,
@@ -73,6 +75,7 @@ export const Finance = () => {
     const userId = localStorage.getItem('userId');
     const token = localStorage.getItem('token');
     if (!userId || !token) return;
+    const purchaseDate = item.fechaCompra || new Date().toISOString();
 
     const res = await fetch('https://proyecto-inversiones.onrender.com/api/portfolio', {
       method: 'POST',
@@ -82,12 +85,13 @@ export const Finance = () => {
       },
       body: JSON.stringify({
         name: item.nombre,
+        ticker: item.ticker, // <-- Agregado
         description: item.nombre,
         quantity: item.cantidad,
         purchase_price: item.precio,
         type: item.tipoActivo,
         user_id: userId,
-        purchase_date: item.fechaCompra || new Date().toISOString(),
+        purchase_date: purchaseDate,
       }),
     });
 
@@ -103,6 +107,7 @@ export const Finance = () => {
         {
           id: newItem.id,
           nombre: newItem.name,
+          ticker: newItem.ticker, // <-- Agregado
           cantidad: newItem.quantity,
           precio: newItem.purchase_price,
           tipoActivo: newItem.type,
