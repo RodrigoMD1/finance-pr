@@ -13,7 +13,7 @@ export function Register({ onRegisterSuccess }: { onRegisterSuccess: () => void 
     setMessage('');
     setSuccess(false);
     try {
-      const res = await fetch('https://proyecto-inversiones.onrender.com/api/auth/register', {
+      const res = await fetch('https://proyecto-inversiones.onrender.com/api/auth/registro', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, name, password }),
