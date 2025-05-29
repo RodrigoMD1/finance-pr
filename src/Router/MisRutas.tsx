@@ -10,6 +10,7 @@ import { Finance } from '../components/Finance';
 import { Stadistics } from '../components/Stadistics';
 import { UserSettings } from '../components/UserSettings';
 import { VerifyEmail } from '../components/VerifyEmail'; // <-- importa el componente de verificación
+import { Reports } from '../components/Reports';
 
 export const MisRutas = () => {
     const [showAuth, setShowAuth] = useState(false);
@@ -61,7 +62,8 @@ export const MisRutas = () => {
                 <Route path='/finance' element={<Finance />} />
                 <Route path='/stadistics' element={<Stadistics />} />
                 <Route path='/settings' element={<UserSettings />} />
-                <Route path='/verify-email' element={<VerifyEmail />} /> 
+                <Route path='/verify-email' element={<VerifyEmail />} />
+                <Route path='/reports' element={<Reports />} />
 
                 <Route
                     path="*"

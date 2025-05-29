@@ -1,88 +1,73 @@
-import React, { useState } from 'react';
+import { useState } from "react";
 
-export const Register = ({ onRegisterSuccess }: { onRegisterSuccess: () => void }) => {
-  const [name, setName] = useState('');
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+export function Register({ onRegisterSuccess }: { onRegisterSuccess: () => void }) {
   const [email, setEmail] = useState('');
+  const [name, setName] = useState('');
   const [password, setPassword] = useState('');
-  const [repeatPassword, setRepeatPassword] = useState('');
-  const [error, setError] = useState('');
+  const [message, setMessage] = useState('');
   const [success, setSuccess] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setError('');
+    setMessage('');
     setSuccess(false);
-    if (password !== repeatPassword) {
-      setError('Las contraseñas no coinciden');
-      return;
-    }
     try {
-      const res = await fetch('https://proyecto-inversiones.onrender.com/api/auth/registro', {
+      const res = await fetch('https://proyecto-inversiones.onrender.com/api/auth/register', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name, email, password }),
+        body: JSON.stringify({ email, name, password }),
       });
       const data = await res.json();
       if (res.ok) {
-        localStorage.setItem('token', data.token);
-        localStorage.setItem('userId', data.userId);
         setSuccess(true);
-        setTimeout(() => {
-          setSuccess(false);
-          onRegisterSuccess();
-        }, 1500);
+        setMessage("Te enviamos un correo de verificación. Por favor, revisa tu bandeja de entrada y haz clic en el enlace para verificar tu email.");
+        // Puedes llamar a onRegisterSuccess() si quieres cerrar el modal automáticamente
       } else {
-        setError(data.message || 'Error al registrarse');
+        setMessage(data.message || 'Error al registrarse');
       }
     } catch {
-      setError('Error de conexión');
+      setMessage('Error de conexión');
     }
   };
 
+  if (success) {
+    return (
+      <div className="p-4 text-center">
+        <h2 className="mb-2 text-lg font-bold">Registro exitoso</h2>
+        <div className="mb-2">{message}</div>
+      </div>
+    );
+  }
+
   return (
     <form onSubmit={handleSubmit} className="flex flex-col max-w-xs gap-4 mx-auto">
-      <fieldset className="p-4 border fieldset w-xs border-base-300 rounded-box">
-        <legend className="fieldset-legend">Registro</legend>
-        <label className="fieldset-label">Nombre</label>
-        <input
-          type="text"
-          className="input"
-          placeholder="Nombre completo"
-          value={name}
-          onChange={e => setName(e.target.value)}
-          required
-        />
-        <label className="fieldset-label">Email</label>
-        <input
-          type="email"
-          className="input"
-          placeholder="Email"
-          value={email}
-          onChange={e => setEmail(e.target.value)}
-          required
-        />
-        <label className="fieldset-label">Contraseña</label>
-        <input
-          type="password"
-          className="input"
-          placeholder="Contraseña"
-          value={password}
-          onChange={e => setPassword(e.target.value)}
-          required
-        />
-        <label className="fieldset-label">Repetir Contraseña</label>
-        <input
-          type="password"
-          className="input"
-          placeholder="Repetir Contraseña"
-          value={repeatPassword}
-          onChange={e => setRepeatPassword(e.target.value)}
-          required
-        />
-        {error && <div className="text-red-500">{error}</div>}
-        {success && <div className="text-green-600">¡Registro exitoso!</div>}
-        <button className="mt-4 btn btn-primary" type="submit">Registrarse</button>
-      </fieldset>
+      <input
+        type="text"
+        placeholder="Nombre"
+        value={name}
+        onChange={e => setName(e.target.value)}
+        required
+        className="input input-bordered"
+      />
+      <input
+        type="email"
+        placeholder="Correo"
+        value={email}
+        onChange={e => setEmail(e.target.value)}
+        required
+        className="input input-bordered"
+      />
+      <input
+        type="password"
+        placeholder="Contraseña"
+        value={password}
+        onChange={e => setPassword(e.target.value)}
+        required
+        className="input input-bordered"
+      />
+      <button type="submit" className="btn btn-primary">Registrarse</button>
+      {message && <div className="text-red-600">{message}</div>}
     </form>
   );
-};
+}

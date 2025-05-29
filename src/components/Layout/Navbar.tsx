@@ -62,10 +62,16 @@ export const Navbarr = ({
           </span>
         ) : null}
         {isLoggedIn && (
-          <NavLink to="/stadistics" className="btn btn-info">
-            Estadísticas
-          </NavLink>
+          <>
+            <NavLink to="/stadistics" className="btn btn-info">
+              Estadísticas
+            </NavLink>
+            <NavLink to="/reports" className="btn btn-info">
+              Informes
+            </NavLink>
+          </>
         )}
+
         {isLoggedIn ? (
           <a className="btn" onClick={onLogoutClick}>Cerrar Sesión</a>
         ) : (

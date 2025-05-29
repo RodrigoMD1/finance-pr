@@ -35,7 +35,7 @@ export const Stadistics = () => {
     const fetchStats = async () => {
       const userId = localStorage.getItem("userId");
       const token = localStorage.getItem("token");
-      if (!userId || !token) return;
+      if (!userId || userId === "undefined" || !token) return;
       const res = await fetch(`https://proyecto-inversiones.onrender.com/api/portfolio/statistics/${userId}`, {
         headers: { Authorization: `Bearer ${token}` }
       });
@@ -53,7 +53,7 @@ export const Stadistics = () => {
     const fetchPerformance = async () => {
       const userId = localStorage.getItem("userId");
       const token = localStorage.getItem("token");
-      if (!userId || !token) return;
+      if (!userId || userId === "undefined" || !token) return;
       const res = await fetch(
         `https://proyecto-inversiones.onrender.com/api/portfolio/performance/${userId}?date=${date}`,
         { headers: { Authorization: `Bearer ${token}` } }
@@ -71,7 +71,7 @@ export const Stadistics = () => {
     const fetchHistory = async () => {
       const userId = localStorage.getItem("userId");
       const token = localStorage.getItem("token");
-      if (!userId || !token) return;
+      if (!userId || userId === "undefined" || !token) return;
       const res = await fetch(
         `https://proyecto-inversiones.onrender.com/api/portfolio/history/${userId}?from=${from}&to=${to}`,
         { headers: { Authorization: `Bearer ${token}` } }
