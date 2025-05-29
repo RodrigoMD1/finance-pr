@@ -1,6 +1,7 @@
 import { ControlPanel } from "./ControlPanel";
 
 import { PortfolioItem } from "../types/PortfolioItem";
+import { BitcoinPrice } from "./BitcoinPrice";
 
 type FinanceTableProps = {
   items: PortfolioItem[];
@@ -11,7 +12,9 @@ type FinanceTableProps = {
 export const FinanceTable = ({ items, onDeleteItem, onAddItem }: FinanceTableProps) => {
   return (
     <div className="overflow-x-auto">
+      
       <ControlPanel onAddItem={onAddItem} />
+      <BitcoinPrice />
       <table className="table">
         <thead>
           <tr>

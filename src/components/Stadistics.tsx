@@ -1,9 +1,15 @@
+// ...existing code...
 import { useEffect, useState } from "react";
 
 export const Stadistics = () => {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [stats, setStats] = useState<any>(null);
   const [loading, setLoading] = useState(true);
+
+  // NUEVO: Estado para rendimiento histórico
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const [performance, setPerformance] = useState<any[]>([]);
+  const [date, setDate] = useState<string>(new Date().toISOString().slice(0, 10)); // YYYY-MM-DD
 
   useEffect(() => {
     const fetchStats = async () => {
@@ -21,6 +27,24 @@ export const Stadistics = () => {
     };
     fetchStats();
   }, []);
+
+  // NUEVO: Traer rendimiento histórico cuando cambia la fecha
+  useEffect(() => {
+    const fetchPerformance = async () => {
+      const userId = localStorage.getItem("userId");
+      const token = localStorage.getItem("token");
+      if (!userId || !token) return;
+      const res = await fetch(
+        `https://proyecto-inversiones.onrender.com/api/portfolio/performance/${userId}?date=${date}`,
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      if (res.ok) {
+        const data = await res.json();
+        setPerformance(data);
+      }
+    };
+    fetchPerformance();
+  }, [date]);
 
   if (loading) return <div className="p-8 text-center">Cargando estadísticas...</div>;
   if (!stats) return <div className="p-8 text-center text-red-500">No se pudieron cargar las estadísticas.</div>;
@@ -59,6 +83,32 @@ export const Stadistics = () => {
         ) : (
           <div>No hay activos.</div>
         )}
+      </div>
+
+      {/* NUEVO: Informe de rendimiento histórico */}
+      <div className="mb-4">
+        <strong>Rendimiento por activo al {date}:</strong>
+        <input
+          type="date"
+          value={date}
+          onChange={e => setDate(e.target.value)}
+          className="px-2 ml-2 border rounded"
+        />
+        <ul>
+          {performance.map(item => (
+            <li key={item.id}>
+              {item.name || item.nombre} ({item.ticker}) [{item.tipo}]:&nbsp;
+              {item.rendimiento !== null
+                ? <span style={{ color: item.rendimiento >= 0 ? "green" : "red" }}>
+                  {item.rendimiento.toFixed(2)}%
+                </span>
+                : "Sin datos"}
+              {item.priceOnDate && (
+                <> (Precio en fecha: ${item.priceOnDate.toLocaleString('es-AR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })})</>
+              )}
+            </li>
+          ))}
+        </ul>
       </div>
       {/* Puedes mostrar más detalles si lo deseas */}
     </div>
