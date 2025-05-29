@@ -77,6 +77,26 @@ export const ControlPanel: React.FC<ControlPanelProps> = ({ onAddItem }) => {
           required
         />
 
+        
+
+        <input
+          type="number"
+          name="cantidad"
+          placeholder="Cantidad"
+          value={form.cantidad}
+          onChange={handleChange}
+          className="w-full input input-bordered"
+          required
+        />
+        <input
+          type="number"
+          name="precio"
+          placeholder="Precio de compra"
+          value={form.precio}
+          onChange={handleChange}
+          className="w-full input input-bordered"
+          required
+        />
         {form.tipoActivo === "Acción" && (
           <select
             name="ticker"
@@ -116,25 +136,6 @@ export const ControlPanel: React.FC<ControlPanelProps> = ({ onAddItem }) => {
             disabled
           />
         )}
-
-        <input
-          type="number"
-          name="cantidad"
-          placeholder="Cantidad"
-          value={form.cantidad}
-          onChange={handleChange}
-          className="w-full input input-bordered"
-          required
-        />
-        <input
-          type="number"
-          name="precio"
-          placeholder="Precio de compra"
-          value={form.precio}
-          onChange={handleChange}
-          className="w-full input input-bordered"
-          required
-        />
         <select
           name="tipoActivo"
           value={form.tipoActivo}
