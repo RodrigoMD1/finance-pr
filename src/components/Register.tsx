@@ -1,7 +1,7 @@
 import { useState } from "react";
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-export function Register({ onRegisterSuccess }: { onRegisterSuccess: () => void }) {
+
+export function Register() {
   const [email, setEmail] = useState('');
   const [name, setName] = useState('');
   const [password, setPassword] = useState('');
