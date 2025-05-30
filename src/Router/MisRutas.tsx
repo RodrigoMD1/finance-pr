@@ -9,7 +9,7 @@ import { Register } from '../components/Register';
 import { Finance } from '../components/Finance';
 import { Stadistics } from '../components/Stadistics';
 import { UserSettings } from '../components/UserSettings';
-import { VerifyEmail } from '../components/VerifyEmail'; // <-- importa el componente de verificación
+import { VerifyEmail } from '../components/VerifyEmail';
 import { Reports } from '../components/Reports';
 
 export const MisRutas = () => {
@@ -43,7 +43,7 @@ export const MisRutas = () => {
                             </>
                         ) : (
                             <>
-                                <Register onRegisterSuccess={() => setShowAuth(false)} />
+                                <Register />
                                 <button className="btn btn-link" onClick={() => setAuthView('login')}>
                                     ¿Ya tienes cuenta? Iniciar sesión
                                 </button>
