@@ -4,12 +4,11 @@ function DownloadReportButton() {
         const res = await fetch("https://proyecto-inversiones.onrender.com/api/report/download", {
             headers: { Authorization: `Bearer ${token}` }
         });
-        const text = await res.text();
-        const blob = new Blob([text], { type: "text/html" });
+        const blob = await res.blob();
         const url = window.URL.createObjectURL(blob);
         const a = document.createElement("a");
         a.href = url;
-        a.download = "reporte.html";
+        a.download = "reporte.pdf";
         a.click();
         window.URL.revokeObjectURL(url);
     };
