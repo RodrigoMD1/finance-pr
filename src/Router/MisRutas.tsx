@@ -33,25 +33,41 @@ export const MisRutas = () => {
             {/* Modal de autenticación */}
             {showAuth && (
                 <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40">
-                    <div className="bg-gray-500 p-8 rounded shadow-lg min-w-[320px]">
+                    <div className="bg-white p-8 rounded-xl shadow-2xl min-w-[340px] max-w-xs w-full relative">
+                        <button
+                            className="absolute text-xl font-bold text-gray-400 top-2 right-2 hover:text-red-500"
+                            onClick={() => setShowAuth(false)}
+                            aria-label="Cerrar"
+                        >
+                            ×
+                        </button>
                         {authView === 'login' ? (
                             <>
                                 <Login onLoginSuccess={() => setShowAuth(false)} />
-                                <button className="btn btn-link" onClick={() => setAuthView('register')}>
-                                    ¿No tienes cuenta? Registrate
-                                </button>
+                                <div className="mt-4 text-center">
+                                    <span className="text-gray-600">¿No tienes cuenta?</span>
+                                    <button
+                                        className="px-4 py-2 ml-2 font-semibold text-white transition-colors bg-blue-700 rounded-lg shadow hover:bg-blue-800"
+                                        onClick={() => setAuthView('register')}
+                                    >
+                                        Regístrate
+                                    </button>
+                                </div>
                             </>
                         ) : (
                             <>
                                 <Register />
-                                <button className="btn btn-link" onClick={() => setAuthView('login')}>
-                                    ¿Ya tienes cuenta? Iniciar sesión
-                                </button>
+                                <div className="mt-4 text-center">
+                                    <span className="text-gray-600">¿Ya tienes cuenta?</span>
+                                    <button
+                                        className="px-4 py-2 ml-2 font-semibold text-white transition-colors bg-blue-700 rounded-lg shadow hover:bg-blue-800"
+                                        onClick={() => setAuthView('login')}
+                                    >
+                                        Iniciar sesión
+                                    </button>
+                                </div>
                             </>
                         )}
-                        <button className="mt-2 btn btn-sm btn-error" onClick={() => setShowAuth(false)}>
-                            Cerrar
-                        </button>
                     </div>
                 </div>
             )}
