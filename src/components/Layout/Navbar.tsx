@@ -42,7 +42,7 @@ export const Navbarr = ({
                   </li>
                   <li>
                     <span className="flex items-center gap-2 cursor-not-allowed opacity-60">
-                      <FaBook /> Manual de operaciones (próximamente)
+                      <FaBook />  Manual de operaciones, suscripciones (próximamente) 
                     </span>
                   </li>
                 </ul>
@@ -93,7 +93,7 @@ export const Navbarr = ({
                 </li>
                 <li>
                   <span className="flex items-center gap-2 cursor-not-allowed opacity-60">
-                    <FaBook /> Manual de operaciones (próximamente)
+                    <FaBook /> Manual de operaciones , suscripciones (próximamente) 
                   </span>
                 </li>
               </ul>
