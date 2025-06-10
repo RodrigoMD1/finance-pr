@@ -13,7 +13,7 @@ export const News = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch("/api/news")
+    fetch("https://proyecto-inversiones.onrender.com/api/news")
       .then(res => res.json())
       .then(data => {
         setNews(data.articles || []);
