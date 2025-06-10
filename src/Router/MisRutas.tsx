@@ -11,6 +11,7 @@ import { Stadistics } from '../components/Stadistics';
 import { UserSettings } from '../components/UserSettings';
 import { VerifyEmail } from '../components/VerifyEmail';
 import { Reports } from '../components/Reports';
+import { News } from '../components/News';
 
 export const MisRutas = () => {
     const [showAuth, setShowAuth] = useState(false);
@@ -80,6 +81,7 @@ export const MisRutas = () => {
                 <Route path='/settings' element={<UserSettings />} />
                 <Route path='/verify-email' element={<VerifyEmail />} />
                 <Route path='/reports' element={<Reports />} />
+                <Route path="/news" element={<News />} />
 
                 <Route
                     path="*"

@@ -30,7 +30,7 @@ export const Navbarr = ({
               <details>
                 <summary>Parent</summary>
                 <ul className="p-2">
-                  <li><a>Noticias(proximamente)</a></li>KTk
+                  <li><NavLink to="/news">Noticias</NavLink></li>
                   <li><a>Manual de operaciones(proximamente)</a></li>
                 </ul>
               </details>
@@ -47,7 +47,7 @@ export const Navbarr = ({
             <details>
               <summary>Parent</summary>
               <ul className="p-2">
-                <li><a>Noticias(proximamente)</a></li>
+                <li><NavLink to="/news">Noticias</NavLink></li>
                 <li><a>Manual de operaciones(proximamente)</a></li>
               </ul>
             </details>
