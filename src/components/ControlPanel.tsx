@@ -64,9 +64,9 @@ export const ControlPanel: React.FC<ControlPanelProps> = ({ onAddItem }) => {
       <img
         src={panelImg}
         alt="Panel de control"
-        className="object-cover w-full max-w-lg m-5 mx-auto mb-6 shadow rounded-xl"
+        className="object-cover w-full max-w-lg mx-auto mb-6 shadow rounded-xl"
       />
-      <form onSubmit={handleSubmit} className="grid grid-cols-1 gap-4 m-5 mb-6 md:grid-cols-2">
+      <form onSubmit={handleSubmit} className="grid grid-cols-1 gap-4 mb-6 md:grid-cols-2">
         <input
           type="text"
           name="nombre"

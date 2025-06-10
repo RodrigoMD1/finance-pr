@@ -10,7 +10,7 @@ type FinanceTableProps = {
 
 export const FinanceTable = ({ items, onDeleteItem, onAddItem }: FinanceTableProps) => {
   return (
-    <div className="max-w-5xl p-6 mx-auto overflow-x-auto shadow-lg bg-base-200 rounded-xl" style={{ fontFamily: "Inter, Roboto, Arial, sans-serif" }}>
+    <div className="max-w-5xl p-6 m-5 mx-auto overflow-x-auto shadow-lg bg-base-200 rounded-xl" style={{ fontFamily: "Inter, Roboto, Arial, sans-serif" }}>
       {/* Panel de control arriba */}
       <div className="mb-4">
         <ControlPanel onAddItem={onAddItem} />
