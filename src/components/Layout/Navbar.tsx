@@ -1,4 +1,5 @@
 import { NavLink } from "react-router-dom";
+import { FaUserCircle, FaSignOutAlt, FaSignInAlt, FaChartBar, FaFileAlt, FaHome, FaNewspaper, FaBook } from "react-icons/fa";
 
 export const Navbarr = ({
   onLoginClick,
@@ -10,74 +11,133 @@ export const Navbarr = ({
   const isLoggedIn = !!localStorage.getItem('token');
   const name = localStorage.getItem('userName');
 
-  console.log({ isLoggedIn, name });
-
-
   return (
-    <div className="shadow-sm navbar bg-base-300 rounded-box">
+    <nav className="px-4 py-2 shadow-md navbar bg-base-200 rounded-box">
       <div className="navbar-start">
         <div className="dropdown">
-          <div tabIndex={0} role="button" className="btn btn-ghost lg:hidden">
-            <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <button tabIndex={0} className="btn btn-ghost lg:hidden" aria-label="Menú">
+            <svg xmlns="http://www.w3.org/2000/svg" className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h8m-8 6h16" />
             </svg>
-          </div>
+          </button>
           <ul
             tabIndex={0}
-            className="p-2 mt-3 shadow menu menu-sm dropdown-content bg-base-100 rounded-box z-1 w-52">
-            <li><NavLink to="/inicio">Inicio</NavLink></li>
+            className="z-10 w-56 p-2 mt-3 shadow menu menu-sm dropdown-content bg-base-100 rounded-box"
+          >
+            <li>
+              <NavLink to="/inicio" className="flex items-center gap-2">
+                <FaHome /> Inicio
+              </NavLink>
+            </li>
             <li>
               <details>
-                <summary>Parent</summary>
+                <summary className="flex items-center gap-2">
+                  <FaBook /> Recursos
+                </summary>
                 <ul className="p-2">
-                  <li><NavLink to="/news">Noticias</NavLink></li>
-                  <li><a>Manual de operaciones(proximamente)</a></li>
+                  <li>
+                    <NavLink to="/news" className="flex items-center gap-2">
+                      <FaNewspaper /> Noticias
+                    </NavLink>
+                  </li>
+                  <li>
+                    <span className="flex items-center gap-2 cursor-not-allowed opacity-60">
+                      <FaBook /> Manual de operaciones (próximamente)
+                    </span>
+                  </li>
                 </ul>
               </details>
             </li>
-            <li><NavLink to="/finance">FinanceTable</NavLink></li>
+            <li>
+              <NavLink to="/finance" className="flex items-center gap-2">
+                <FaFileAlt /> Finanzas
+              </NavLink>
+            </li>
+            {isLoggedIn && (
+              <>
+                <li>
+                  <NavLink to="/stadistics" className="flex items-center gap-2">
+                    <FaChartBar /> Estadísticas
+                  </NavLink>
+                </li>
+                <li>
+                  <NavLink to="/reports" className="flex items-center gap-2">
+                    <FaFileAlt /> Informes
+                  </NavLink>
+                </li>
+              </>
+            )}
           </ul>
         </div>
-        <a className="text-xl btn btn-ghost">daisyUI</a>
+        <NavLink to="/inicio" className="text-2xl font-bold tracking-wide normal-case btn btn-ghost">
+          <span className="text-primary">FinancePR</span>
+        </NavLink>
       </div>
       <div className="hidden navbar-center lg:flex">
-        <ul className="px-1 menu menu-horizontal">
-          <li><NavLink to="/inicio">Inicio</NavLink></li>
+        <ul className="gap-2 px-1 menu menu-horizontal">
+          <li>
+            <NavLink to="/inicio" className="flex items-center gap-2">
+              <FaHome /> Inicio
+            </NavLink>
+          </li>
           <li>
             <details>
-              <summary>Parent</summary>
+              <summary className="flex items-center gap-2">
+                <FaBook /> Recursos
+              </summary>
               <ul className="p-2">
-                <li><NavLink to="/news">Noticias</NavLink></li>
-                <li><a>Manual de operaciones(proximamente)</a></li>
+                <li>
+                  <NavLink to="/news" className="flex items-center gap-2">
+                    <FaNewspaper /> Noticias
+                  </NavLink>
+                </li>
+                <li>
+                  <span className="flex items-center gap-2 cursor-not-allowed opacity-60">
+                    <FaBook /> Manual de operaciones (próximamente)
+                  </span>
+                </li>
               </ul>
             </details>
           </li>
-          <li><NavLink to="/finance">FinanceTable</NavLink></li>
+          <li>
+            <NavLink to="/finance" className="flex items-center gap-2">
+              <FaFileAlt /> Finanzas
+            </NavLink>
+          </li>
+          {isLoggedIn && (
+            <>
+              <li>
+                <NavLink to="/stadistics" className="flex items-center gap-2">
+                  <FaChartBar /> Estadísticas
+                </NavLink>
+              </li>
+              <li>
+                <NavLink to="/reports" className="flex items-center gap-2">
+                  <FaFileAlt /> Informes
+                </NavLink>
+              </li>
+            </>
+          )}
         </ul>
       </div>
-      <div className="flex items-center gap-2 navbar-end">
-        {isLoggedIn && name ? (
-          <span className="px-3 py-1 text-sm rounded alert alert-info">
-            Conectado como: <strong>{name}</strong>
+      <div className="flex items-center gap-3 navbar-end">
+        {isLoggedIn && name && (
+          <span className="flex items-center gap-2 px-3 py-1 text-sm font-medium rounded-full bg-info/20 text-info">
+            <FaUserCircle className="text-lg" />
+            <span>Conectado como:</span>
+            <strong>{name}</strong>
           </span>
-        ) : null}
-        {isLoggedIn && (
-          <>
-            <NavLink to="/stadistics" className="btn btn-info">
-              Estadísticas
-            </NavLink>
-            <NavLink to="/reports" className="btn btn-info">
-              Informes
-            </NavLink>
-          </>
         )}
-
         {isLoggedIn ? (
-          <a className="btn" onClick={onLogoutClick}>Cerrar Sesión</a>
+          <button className="flex items-center gap-2 btn btn-error btn-sm" onClick={onLogoutClick}>
+            <FaSignOutAlt /> Cerrar Sesión
+          </button>
         ) : (
-          <a className="btn" onClick={onLoginClick}>Iniciar Sesión</a>
+          <button className="flex items-center gap-2 btn btn-success btn-sm" onClick={onLoginClick}>
+            <FaSignInAlt /> Iniciar Sesión
+          </button>
         )}
       </div>
-    </div>
+    </nav>
   );
 };
