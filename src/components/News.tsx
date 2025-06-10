@@ -13,24 +13,12 @@ export const News = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const apiKey = "d76c3a701981f986107bfbce75eb32dd";
-    // Request para economía
-    const businessUrl = `https://gnews.io/api/v4/top-headlines?category=business&lang=es&max=5&token=${apiKey}`;
-    // Request para tecnología (donde suelen aparecer noticias de crypto)
-    const techUrl = `https://gnews.io/api/v4/top-headlines?category=technology&lang=es&max=5&token=${apiKey}`;
-
-    Promise.all([
-      fetch(businessUrl).then(res => res.json()),
-      fetch(techUrl).then(res => res.json())
-    ]).then(([businessData, techData]) => {
-      // Filtra solo noticias de crypto en tecnología
-      const cryptoNews = (techData.articles || []).filter(
-        (item: NewsItem) =>
-          /crypto|bitcoin|ethereum|blockchain/i.test(item.title + " " + item.description)
-      );
-      setNews([...(businessData.articles || []), ...cryptoNews]);
-      setLoading(false);
-    });
+    fetch("/api/news")
+      .then(res => res.json())
+      .then(data => {
+        setNews(data.articles || []);
+        setLoading(false);
+      });
   }, []);
 
   if (loading) return <div className="my-8 text-center">Cargando noticias...</div>;
