@@ -4,11 +4,13 @@ import { FaUserCircle, FaSignOutAlt, FaSignInAlt, FaChartBar, FaFileAlt, FaHome,
 export const Navbarr = ({
   onLoginClick,
   onLogoutClick,
+  isAuthenticated,
 }: {
   onLoginClick: () => void;
   onLogoutClick: () => void;
+  isAuthenticated: boolean;
 }) => {
-  const isLoggedIn = !!localStorage.getItem('token');
+  const isLoggedIn = isAuthenticated;
   const name = localStorage.getItem('userName');
 
   return (

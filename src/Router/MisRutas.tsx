@@ -12,16 +12,30 @@ import { UserSettings } from '../components/UserSettings';
 import { VerifyEmail } from '../components/VerifyEmail';
 import { Reports } from '../components/Reports';
 import { News } from '../components/News';
+import { useAuthCheck } from '../hooks/useAuthCheck';
+import { logout } from '../utils/auth';
 
 export const MisRutas = () => {
     const [showAuth, setShowAuth] = useState(false);
     const [authView, setAuthView] = useState<'login' | 'register'>('login');
+    const { isAuthenticated, isLoading } = useAuthCheck();
 
     // Función para cerrar sesión
     const handleLogout = () => {
-        localStorage.clear();
-        window.location.reload();
+        logout();
     };
+
+    // Mostrar pantalla de carga mientras verifica la autenticación
+    if (isLoading) {
+        return (
+            <div className="flex items-center justify-center min-h-screen">
+                <div className="text-center">
+                    <div className="w-8 h-8 mx-auto mb-4 border-4 border-blue-700 border-t-transparent rounded-full animate-spin"></div>
+                    <p className="text-gray-600">Verificando sesión...</p>
+                </div>
+            </div>
+        );
+    }
 
     return (
         <BrowserRouter>
@@ -29,6 +43,7 @@ export const MisRutas = () => {
             <Navbarr
                 onLoginClick={() => { setShowAuth(true); setAuthView('login'); }}
                 onLogoutClick={handleLogout}
+                isAuthenticated={isAuthenticated}
             />
 
             {/* Modal de autenticación */}
@@ -76,11 +91,11 @@ export const MisRutas = () => {
             <Routes>
                 <Route path='/' element={<Inicio />} />
                 <Route path='/inicio' element={<Inicio />} />
-                <Route path='/finance' element={<Finance />} />
-                <Route path='/stadistics' element={<Stadistics />} />
-                <Route path='/settings' element={<UserSettings />} />
+                <Route path='/finance' element={isAuthenticated ? <Finance /> : <Inicio />} />
+                <Route path='/stadistics' element={isAuthenticated ? <Stadistics /> : <Inicio />} />
+                <Route path='/settings' element={isAuthenticated ? <UserSettings /> : <Inicio />} />
                 <Route path='/verify-email' element={<VerifyEmail />} />
-                <Route path='/reports' element={<Reports />} />
+                <Route path='/reports' element={isAuthenticated ? <Reports /> : <Inicio />} />
                 <Route path="/news" element={<News />} />
 
                 <Route

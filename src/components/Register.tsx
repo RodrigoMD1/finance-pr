@@ -6,11 +6,13 @@ export function Register() {
   const [password, setPassword] = useState('');
   const [message, setMessage] = useState('');
   const [success, setSuccess] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setMessage('');
     setSuccess(false);
+    setLoading(true);
     try {
       const res = await fetch('https://proyecto-inversiones.onrender.com/api/auth/registro', {
         method: 'POST',
@@ -26,6 +28,8 @@ export function Register() {
       }
     } catch {
       setMessage('Error de conexión');
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -83,9 +87,17 @@ export function Register() {
       </div>
       <button
         type="submit"
-        className="w-full py-2 mt-2 font-semibold text-white transition-colors bg-blue-700 rounded-lg shadow hover:bg-blue-800"
+        className="w-full py-2 mt-2 font-semibold text-white transition-colors bg-blue-700 rounded-lg shadow hover:bg-blue-800 disabled:opacity-50 disabled:cursor-not-allowed"
+        disabled={loading}
       >
-        Registrarse
+        {loading ? (
+          <div className="flex items-center justify-center">
+            <div className="w-4 h-4 mr-2 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+            Registrando...
+          </div>
+        ) : (
+          'Registrarse'
+        )}
       </button>
       {message && (
         <div className="font-medium text-center text-red-600">{message}</div>

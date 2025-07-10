@@ -4,10 +4,12 @@ export function Login({ onLoginSuccess }: { onLoginSuccess: () => void }) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
+    setLoading(true);
     try {
       const res = await fetch('https://proyecto-inversiones.onrender.com/api/auth/login', {
         method: 'POST',
@@ -27,6 +29,8 @@ export function Login({ onLoginSuccess }: { onLoginSuccess: () => void }) {
       }
     } catch {
       setError('Error de conexión');
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -61,10 +65,18 @@ export function Login({ onLoginSuccess }: { onLoginSuccess: () => void }) {
       </div>
       {error && <div className="font-medium text-center text-red-600">{error}</div>}
       <button
-        className="w-full py-2 mt-2 font-semibold text-white transition-colors bg-blue-700 rounded-lg shadow hover:bg-blue-800"
+        className="w-full py-2 mt-2 font-semibold text-white transition-colors bg-blue-700 rounded-lg shadow hover:bg-blue-800 disabled:opacity-50 disabled:cursor-not-allowed"
         type="submit"
+        disabled={loading}
       >
-        Iniciar sesión
+        {loading ? (
+          <div className="flex items-center justify-center">
+            <div className="w-4 h-4 mr-2 border-2 border-white rounded-full border-t-transparent animate-spin"></div>
+            Iniciando sesión...
+          </div>
+        ) : (
+          'Iniciar sesión'
+        )}
       </button>
       
     </form>
