@@ -43,9 +43,14 @@ export const Navbarr = ({
                     </NavLink>
                   </li>
                   <li>
-                    <span className="flex items-center gap-2 cursor-not-allowed opacity-60">
-                      <FaBook />  Manual de operaciones, suscripciones (próximamente) 
-                    </span>
+                    <NavLink to="/manual" className="flex items-center gap-2">
+                      <FaBook /> Manual de Usuario
+                    </NavLink>
+                  </li>
+                  <li>
+                    <NavLink to="/subscriptions" className="flex items-center gap-2">
+                      <FaBook /> Suscripciones
+                    </NavLink>
                   </li>
                 </ul>
               </details>
@@ -94,9 +99,14 @@ export const Navbarr = ({
                   </NavLink>
                 </li>
                 <li>
-                  <span className="flex items-center gap-2 cursor-not-allowed opacity-60">
-                    <FaBook /> Manual de operaciones , suscripciones (próximamente) 
-                  </span>
+                  <NavLink to="/manual" className="flex items-center gap-2">
+                    <FaBook /> Manual de Usuario
+                  </NavLink>
+                </li>
+                <li>
+                  <NavLink to="/subscriptions" className="flex items-center gap-2">
+                    <FaBook /> Suscripciones
+                  </NavLink>
                 </li>
               </ul>
             </details>

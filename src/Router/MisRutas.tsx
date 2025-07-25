@@ -12,6 +12,9 @@ import { UserSettings } from '../components/UserSettings';
 import { VerifyEmail } from '../components/VerifyEmail';
 import { Reports } from '../components/Reports';
 import { News } from '../components/News';
+import { UserManual } from '../components/UserManual';
+import { Subscriptions } from '../components/Subscriptions';
+import { PaymentSuccess, PaymentFailure } from '../components/PaymentStatus';
 import { useAuthCheck } from '../hooks/useAuthCheck';
 import { logout } from '../utils/auth';
 
@@ -97,6 +100,10 @@ export const MisRutas = () => {
                 <Route path='/verify-email' element={<VerifyEmail />} />
                 <Route path='/reports' element={isAuthenticated ? <Reports /> : <Inicio />} />
                 <Route path="/news" element={<News />} />
+                <Route path="/manual" element={<UserManual />} />
+                <Route path="/subscriptions" element={<Subscriptions />} />
+                <Route path="/payment/success" element={<PaymentSuccess />} />
+                <Route path="/payment/failure" element={<PaymentFailure />} />
 
                 <Route
                     path="*"

@@ -2,9 +2,13 @@ import { useEffect, useState } from 'react';
 import { FinanceTable } from './FinanceTable';
 import { PortfolioItem } from "../types/PortfolioItem";
 import { fetchWithAuth } from '../utils/auth';
+import { useSubscriptionLimits } from '../hooks/useSubscriptionLimits';
+import { SubscriptionBanner } from './SubscriptionBanner';
+import toast from 'react-hot-toast';
 
 export const Finance = () => {
   const [portfolio, setPortfolio] = useState<PortfolioItem[]>([]);
+  const { usage, checkAssetLimit, refreshUsage } = useSubscriptionLimits();
 
   useEffect(() => {
     const fetchPortfolio = async () => {
@@ -64,6 +68,12 @@ export const Finance = () => {
   };
 
   const handleAddItem = async (item: Omit<PortfolioItem, 'id'>) => {
+    // Verificar límites de suscripción antes de agregar
+    const canAdd = await checkAssetLimit();
+    if (!canAdd) {
+      return; // No continuar si se alcanzó el límite
+    }
+
     const userId = localStorage.getItem('userId');
     if (!userId) return;
     const purchaseDate = item.fechaCompra || new Date().toISOString();
@@ -97,17 +107,27 @@ export const Finance = () => {
             fechaCompra: newItem.purchase_date || new Date().toISOString(),
           }
         ]);
+        
+        // Actualizar el uso de la suscripción después de agregar exitosamente
+        refreshUsage();
+        toast.success('Activo agregado exitosamente');
       }
     } catch (error) {
       console.error('Error adding item:', error);
+      toast.error('Error al agregar el activo');
     }
   };
 
   return (
-    <FinanceTable
-      items={portfolio}
-      onDeleteItem={handleDeleteItem}
-      onAddItem={handleAddItem}
-    />
+    <div>
+      {/* Banner de suscripción */}
+      {usage && <SubscriptionBanner usage={usage} />}
+      
+      <FinanceTable
+        items={portfolio}
+        onDeleteItem={handleDeleteItem}
+        onAddItem={handleAddItem}
+      />
+    </div>
   );
 };
