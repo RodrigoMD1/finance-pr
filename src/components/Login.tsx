@@ -1,6 +1,16 @@
 import React, { useState } from 'react';
 
-export function Login({ onLoginSuccess }: { onLoginSuccess: () => void }) {
+interface LoginProps {
+  onLoginSuccess: (userData: {
+    token: string;
+    id: string;
+    name: string;
+    email: string;
+    role: string;
+  }) => void;
+}
+
+export function Login({ onLoginSuccess }: LoginProps) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
@@ -23,7 +33,15 @@ export function Login({ onLoginSuccess }: { onLoginSuccess: () => void }) {
         localStorage.setItem('userName', data.name);
         localStorage.setItem('userEmail', data.email);
         localStorage.setItem('userRole', data.role);
-        onLoginSuccess();
+        
+        // Pasar los datos del usuario al callback
+        onLoginSuccess({
+          token: data.token,
+          id: data.id,
+          name: data.name,
+          email: data.email,
+          role: data.role || 'user'
+        });
       } else {
         setError(data.message || 'Error al iniciar sesión');
       }

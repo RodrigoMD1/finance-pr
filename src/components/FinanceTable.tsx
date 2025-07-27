@@ -1,6 +1,8 @@
 import { ControlPanel } from "./ControlPanel";
 import { PortfolioItem } from "../types/PortfolioItem";
 import { BitcoinPrice } from "./BitcoinPrice";
+import { Pagination } from "./Pagination";
+import { usePagination } from "../hooks/usePagination";
 
 type FinanceTableProps = {
   items: PortfolioItem[];
@@ -9,6 +11,23 @@ type FinanceTableProps = {
 };
 
 export const FinanceTable = ({ items, onDeleteItem, onAddItem }: FinanceTableProps) => {
+  // Configuración de paginación
+  const {
+    currentItems,
+    currentPage,
+    totalPages,
+    totalItems,
+    goToPage,
+    nextPage,
+    prevPage,
+    hasNextPage,
+    hasPrevPage,
+    setItemsPerPage,
+    itemsPerPage,
+  } = usePagination({
+    data: items,
+    itemsPerPage: 10, // Mostrar 10 activos por página por defecto
+  });
   return (
     <div className="max-w-5xl p-6 m-5 mx-auto overflow-x-auto shadow-lg bg-base-200 rounded-xl" style={{ fontFamily: "Inter, Roboto, Arial, sans-serif" }}>
       {/* Panel de control arriba */}
@@ -20,6 +39,20 @@ export const FinanceTable = ({ items, onDeleteItem, onAddItem }: FinanceTablePro
         <BitcoinPrice />
       </div>
       <div className="p-4 bg-white rounded-lg shadow">
+        {/* Header con información de paginación cuando hay elementos */}
+        {items.length > 0 && (
+          <div className="flex items-center justify-between mb-4 text-sm text-gray-600">
+            <div>
+              Total de activos: <span className="font-semibold text-blue-600">{items.length}</span>
+            </div>
+            {totalPages > 1 && (
+              <div>
+                Página {currentPage} de {totalPages}
+              </div>
+            )}
+          </div>
+        )}
+        
         <table className="min-w-full divide-y divide-gray-200">
           <thead>
             <tr>
@@ -33,14 +66,14 @@ export const FinanceTable = ({ items, onDeleteItem, onAddItem }: FinanceTablePro
             </tr>
           </thead>
           <tbody className="divide-y divide-gray-100">
-            {items.length === 0 ? (
+            {currentItems.length === 0 ? (
               <tr>
                 <td colSpan={7} className="py-6 text-lg font-medium text-center text-gray-400">
-                  No hay datos para mostrar.
+                  {items.length === 0 ? 'No hay datos para mostrar.' : 'No hay resultados en esta página.'}
                 </td>
               </tr>
             ) : (
-              items.map((item) => (
+              currentItems.map((item) => (
                 <tr key={item.id} className="transition-colors hover:bg-gray-50">
                   <td className="px-4 py-2 font-semibold text-black">{item.nombre}</td>
                   <td className="px-4 py-2 text-black">{Number(item.cantidad).toLocaleString('es-AR')}</td>
@@ -79,6 +112,22 @@ export const FinanceTable = ({ items, onDeleteItem, onAddItem }: FinanceTablePro
             )}
           </tbody>
         </table>
+        
+        {/* Componente de paginación */}
+        {items.length > 0 && (
+          <Pagination
+            currentPage={currentPage}
+            totalPages={totalPages}
+            totalItems={totalItems}
+            itemsPerPage={itemsPerPage}
+            onPageChange={goToPage}
+            onItemsPerPageChange={setItemsPerPage}
+            hasNextPage={hasNextPage}
+            hasPrevPage={hasPrevPage}
+            onNextPage={nextPage}
+            onPrevPage={prevPage}
+          />
+        )}
       </div>
     </div>
   );

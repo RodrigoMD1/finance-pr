@@ -11,8 +11,11 @@ import {
   Line,
   XAxis,
   YAxis,
-  CartesianGrid
+  CartesianGrid,
 } from "recharts";
+import { statsService } from '../services/statsService';
+import { useDataSync } from '../hooks/useDataSync';
+import toast from 'react-hot-toast';
 
 // Puedes cambiar por la fuente que prefieras, por ejemplo 'Inter', 'Roboto', etc.
 const FONT_FAMILY = "Inter, Roboto, Arial, sans-serif";
@@ -21,6 +24,9 @@ const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#A28CFE', '#FF6699'
 export const Stadistics = () => {
   const [stats, setStats] = useState<any>(null);
   const [loading, setLoading] = useState(true);
+
+  // Sincronizar datos del usuario
+  useDataSync();
 
   // Estado para rendimiento histórico
   const [performance, setPerformance] = useState<any[]>([]);
@@ -41,16 +47,20 @@ export const Stadistics = () => {
   useEffect(() => {
     const fetchStats = async () => {
       const userId = localStorage.getItem("userId");
-      const token = localStorage.getItem("token");
-      if (!userId || userId === "undefined" || !token) return;
-      const res = await fetch(`https://proyecto-inversiones.onrender.com/api/portfolio/statistics/${userId}`, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
-      if (res.ok) {
-        const data = await res.json();
-        setStats(data);
+      if (!userId || userId === "undefined") {
+        setLoading(false);
+        return;
       }
-      setLoading(false);
+      
+      try {
+        const data = await statsService.getStats(userId);
+        setStats(data);
+      } catch (error) {
+        console.error('Error fetching stats:', error);
+        toast.error('Error al cargar estadísticas');
+      } finally {
+        setLoading(false);
+      }
     };
     fetchStats();
   }, []);
@@ -58,15 +68,13 @@ export const Stadistics = () => {
   useEffect(() => {
     const fetchPerformance = async () => {
       const userId = localStorage.getItem("userId");
-      const token = localStorage.getItem("token");
-      if (!userId || userId === "undefined" || !token) return;
-      const res = await fetch(
-        `https://proyecto-inversiones.onrender.com/api/portfolio/performance/${userId}?date=${date}`,
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
-      if (res.ok) {
-        const data = await res.json();
+      if (!userId || userId === "undefined") return;
+      
+      try {
+        const data = await statsService.getPerformance(userId, date);
         setPerformance(data);
+      } catch (error) {
+        console.error('Error fetching performance:', error);
       }
     };
     fetchPerformance();
@@ -75,15 +83,13 @@ export const Stadistics = () => {
   useEffect(() => {
     const fetchHistory = async () => {
       const userId = localStorage.getItem("userId");
-      const token = localStorage.getItem("token");
-      if (!userId || userId === "undefined" || !token) return;
-      const res = await fetch(
-        `https://proyecto-inversiones.onrender.com/api/portfolio/history/${userId}?from=${from}&to=${to}`,
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
-      if (res.ok) {
-        const data = await res.json();
+      if (!userId || userId === "undefined") return;
+      
+      try {
+        const data = await statsService.getHistory(userId, from, to);
         setHistory(data);
+      } catch (error) {
+        console.error('Error fetching history:', error);
       }
     };
     fetchHistory();
@@ -92,15 +98,13 @@ export const Stadistics = () => {
   useEffect(() => {
     const fetchCurrentPerformance = async () => {
       const userId = localStorage.getItem("userId");
-      const token = localStorage.getItem("token");
-      if (!userId || userId === "undefined" || !token) return;
-      const res = await fetch(
-        `https://proyecto-inversiones.onrender.com/api/portfolio/current-performance/${userId}`,
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
-      if (res.ok) {
-        const data = await res.json();
+      if (!userId || userId === "undefined") return;
+      
+      try {
+        const data = await statsService.getCurrentPerformance(userId);
         setCurrentPerformance(data);
+      } catch (error) {
+        console.error('Error fetching current performance:', error);
       }
     };
     fetchCurrentPerformance();
@@ -171,15 +175,52 @@ export const Stadistics = () => {
           <label className="font-medium text-black">Hasta:</label>
           <input type="date" value={to} onChange={e => setTo(e.target.value)} className="px-2 font-medium text-black border rounded" />
         </div>
-        <ResponsiveContainer width="100%" height={220}>
-          <LineChart data={history}>
-            <CartesianGrid strokeDasharray="3 3" />
-            <XAxis dataKey="date" stroke="#222" />
-            <YAxis stroke="#222" />
-            <Tooltip />
-            <Line type="monotone" dataKey="total" stroke="#8884d8" strokeWidth={2} />
-          </LineChart>
-        </ResponsiveContainer>
+        
+        {history.length === 0 ? (
+          <div className="flex items-center justify-center h-48 text-gray-500 border-2 border-gray-200 border-dashed rounded-lg">
+            <div className="text-center">
+              <p className="mb-2 text-lg">No hay datos históricos disponibles</p>
+              <p className="text-sm">Agrega algunos activos a tu portfolio para ver la evolución</p>
+            </div>
+          </div>
+        ) : (
+          <ResponsiveContainer width="100%" height={300}>
+            <LineChart data={history} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
+              <CartesianGrid strokeDasharray="3 3" stroke="#e0e0e0" />
+              <XAxis 
+                dataKey="date" 
+                stroke="#666" 
+                tick={{ fill: '#666' }}
+                tickFormatter={(value) => {
+                  const date = new Date(value);
+                  return `${date.getDate()}/${date.getMonth() + 1}`;
+                }}
+              />
+              <YAxis 
+                stroke="#666" 
+                tick={{ fill: '#666' }}
+                tickFormatter={(value) => `$${value.toLocaleString()}`}
+              />
+              <Tooltip 
+                formatter={(value: any) => [`$${value.toLocaleString('es-AR')}`, 'Valor Total']}
+                labelFormatter={(label) => `Fecha: ${new Date(label).toLocaleDateString('es-AR')}`}
+                contentStyle={{ 
+                  backgroundColor: '#f8f9fa', 
+                  border: '1px solid #dee2e6',
+                  borderRadius: '6px'
+                }}
+              />
+              <Line 
+                type="monotone" 
+                dataKey="total" 
+                stroke="#3b82f6" 
+                strokeWidth={3}
+                dot={{ fill: '#3b82f6', strokeWidth: 2, r: 4 }}
+                activeDot={{ r: 6, stroke: '#3b82f6', strokeWidth: 2 }}
+              />
+            </LineChart>
+          </ResponsiveContainer>
+        )}
       </div>
 
       <div className="grid grid-cols-1 gap-8 mb-8 md:grid-cols-2">

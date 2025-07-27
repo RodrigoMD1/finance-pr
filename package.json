@@ -12,7 +12,9 @@
   "dependencies": {
     "@heroui/react": "^2.7.6",
     "@tailwindcss/vite": "^4.1.4",
+    "@types/lodash": "^4.17.20",
     "framer-motion": "^12.7.3",
+    "lodash": "^4.17.21",
     "mercadopago": "^2.8.0",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",

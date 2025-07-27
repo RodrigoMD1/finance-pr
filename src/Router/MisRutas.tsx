@@ -1,4 +1,3 @@
-import { HeroSection } from '../components/Layout/HeroSection';
 import Inicio from '../components/Inicio';
 import { Footer } from '../components/Footer';
 import { Navbarr } from '../components/Layout/Navbar';
@@ -15,17 +14,33 @@ import { News } from '../components/News';
 import { UserManual } from '../components/UserManual';
 import { Subscriptions } from '../components/Subscriptions';
 import { PaymentSuccess, PaymentFailure } from '../components/PaymentStatus';
-import { useAuthCheck } from '../hooks/useAuthCheck';
-import { logout } from '../utils/auth';
+import FinancialEducation from '../components/FinancialEducation';
+import Contact from '../components/Contact';
+import { useAuth } from '../hooks/useAuth';
+import toast from 'react-hot-toast';
 
 export const MisRutas = () => {
     const [showAuth, setShowAuth] = useState(false);
     const [authView, setAuthView] = useState<'login' | 'register'>('login');
-    const { isAuthenticated, isLoading } = useAuthCheck();
+    const { isAuthenticated, isLoading, login, logout } = useAuth();
+
+    // Función para manejar login exitoso
+    const handleLoginSuccess = (userData: {
+        token: string;
+        id: string;
+        name: string;
+        email: string;
+        role: string;
+    }) => {
+        login(userData);
+        setShowAuth(false);
+        toast.success(`¡Bienvenido, ${userData.name}!`);
+    };
 
     // Función para cerrar sesión
     const handleLogout = () => {
         logout();
+        toast.success('Sesión cerrada correctamente');
     };
 
     // Mostrar pantalla de carga mientras verifica la autenticación
@@ -33,7 +48,7 @@ export const MisRutas = () => {
         return (
             <div className="flex items-center justify-center min-h-screen">
                 <div className="text-center">
-                    <div className="w-8 h-8 mx-auto mb-4 border-4 border-blue-700 border-t-transparent rounded-full animate-spin"></div>
+                    <div className="w-8 h-8 mx-auto mb-4 border-4 border-blue-700 rounded-full border-t-transparent animate-spin"></div>
                     <p className="text-gray-600">Verificando sesión...</p>
                 </div>
             </div>
@@ -42,7 +57,6 @@ export const MisRutas = () => {
 
     return (
         <BrowserRouter>
-            <HeroSection />
             <Navbarr
                 onLoginClick={() => { setShowAuth(true); setAuthView('login'); }}
                 onLogoutClick={handleLogout}
@@ -62,7 +76,7 @@ export const MisRutas = () => {
                         </button>
                         {authView === 'login' ? (
                             <>
-                                <Login onLoginSuccess={() => setShowAuth(false)} />
+                                <Login onLoginSuccess={handleLoginSuccess} />
                                 <div className="mt-4 text-center">
                                     <span className="text-gray-600">¿No tienes cuenta?</span>
                                     <button
@@ -102,6 +116,8 @@ export const MisRutas = () => {
                 <Route path="/news" element={<News />} />
                 <Route path="/manual" element={<UserManual />} />
                 <Route path="/subscriptions" element={<Subscriptions />} />
+                <Route path="/education" element={<FinancialEducation />} />
+                <Route path="/contact" element={<Contact />} />
                 <Route path="/payment/success" element={<PaymentSuccess />} />
                 <Route path="/payment/failure" element={<PaymentFailure />} />
 

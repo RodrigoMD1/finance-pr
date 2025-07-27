@@ -1,14 +1,18 @@
 import { useEffect, useState } from 'react';
 import { FinanceTable } from './FinanceTable';
 import { PortfolioItem } from "../types/PortfolioItem";
-import { fetchWithAuth } from '../utils/auth';
+import { portfolioService } from '../services/portfolioService';
 import { useSubscriptionLimits } from '../hooks/useSubscriptionLimits';
+import { useDataSync } from '../hooks/useDataSync';
 import { SubscriptionBanner } from './SubscriptionBanner';
 import toast from 'react-hot-toast';
 
 export const Finance = () => {
   const [portfolio, setPortfolio] = useState<PortfolioItem[]>([]);
   const { usage, checkAssetLimit, refreshUsage } = useSubscriptionLimits();
+  
+  // Sincronizar datos del usuario al cargar el componente
+  useDataSync();
 
   useEffect(() => {
     const fetchPortfolio = async () => {
@@ -16,38 +20,13 @@ export const Finance = () => {
       if (!userId) return;
       
       try {
-        const res = await fetchWithAuth(`https://proyecto-inversiones.onrender.com/api/portfolio/user/${userId}`);
-        if (res.ok) {
-          const data = await res.json();
-          if (Array.isArray(data)) {
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            const mapped = data.map((item: any) => ({
-              id: item.id,
-              nombre: item.name,
-              ticker: item.ticker,
-              cantidad: item.quantity,
-              precio: item.purchase_price,
-              tipoActivo: item.type,
-              fechaCompra: item.purchase_date || new Date().toISOString(),
-            }));
-            setPortfolio(mapped);
-          } else if (data && data.id) {
-            const mapped = [{
-              id: data.id,
-              nombre: data.name,
-              ticker: data.ticker,
-              cantidad: data.quantity,
-              precio: data.purchase_price,
-              tipoActivo: data.type,
-              fechaCompra: data.purchase_date || new Date().toISOString(),
-            }];
-            setPortfolio(mapped);
-          } else {
-            setPortfolio([]);
-          }
-        }
+        const portfolio = await portfolioService.getPortfolio(userId);
+        // Ordenar por ID descendente para que el último agregado aparezca primero
+        const sortedPortfolio = portfolio.sort((a, b) => (b.id || 0) - (a.id || 0));
+        setPortfolio(sortedPortfolio);
       } catch (error) {
         console.error('Error fetching portfolio:', error);
+        toast.error('Error al cargar el portfolio');
         setPortfolio([]);
       }
     };
@@ -56,14 +35,16 @@ export const Finance = () => {
 
   const handleDeleteItem = async (id: number) => {
     try {
-      const res = await fetchWithAuth(`https://proyecto-inversiones.onrender.com/api/portfolio/item/${id}`, {
-        method: 'DELETE'
-      });
-      if (res.ok) {
+      const success = await portfolioService.deleteItem(id.toString());
+      if (success) {
         setPortfolio(portfolio.filter(item => item.id !== id));
+        refreshUsage();
+        toast.success('Activo eliminado exitosamente');
       }
     } catch (error) {
       console.error('Error deleting item:', error);
+      const errorMessage = error instanceof Error ? error.message : 'Error al eliminar el activo';
+      toast.error(errorMessage);
     }
   };
 
@@ -75,46 +56,23 @@ export const Finance = () => {
     }
 
     const userId = localStorage.getItem('userId');
-    if (!userId) return;
-    const purchaseDate = item.fechaCompra || new Date().toISOString();
+    if (!userId) {
+      toast.error('Usuario no identificado');
+      return;
+    }
 
     try {
-      const res = await fetchWithAuth('https://proyecto-inversiones.onrender.com/api/portfolio', {
-        method: 'POST',
-        body: JSON.stringify({
-          name: item.nombre,
-          ticker: item.ticker,
-          description: item.nombre,
-          quantity: item.cantidad,
-          purchase_price: item.precio,
-          type: item.tipoActivo,
-          user_id: userId,
-          purchase_date: purchaseDate,
-        }),
-      });
-
-      if (res.ok) {
-        const newItem = await res.json();
-        setPortfolio(prev => [
-          ...prev,
-          {
-            id: newItem.id,
-            nombre: newItem.name,
-            ticker: newItem.ticker,
-            cantidad: newItem.quantity,
-            precio: newItem.purchase_price,
-            tipoActivo: newItem.type,
-            fechaCompra: newItem.purchase_date || new Date().toISOString(),
-          }
-        ]);
-        
-        // Actualizar el uso de la suscripción después de agregar exitosamente
-        refreshUsage();
-        toast.success('Activo agregado exitosamente');
-      }
+      const newItem = await portfolioService.addItem(item, userId);
+      // Agregar el nuevo elemento al principio de la lista
+      setPortfolio(prev => [newItem, ...prev]);
+      
+      // Actualizar el uso de la suscripción después de agregar exitosamente
+      refreshUsage();
+      toast.success('Activo agregado exitosamente');
     } catch (error) {
       console.error('Error adding item:', error);
-      toast.error('Error al agregar el activo');
+      const errorMessage = error instanceof Error ? error.message : 'Error al agregar el activo';
+      toast.error(errorMessage, { duration: 6000 });
     }
   };
 

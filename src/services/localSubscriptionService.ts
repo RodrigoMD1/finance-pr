@@ -102,21 +102,26 @@ class LocalSubscriptionService {
   // Obtener cantidad actual de activos del usuario
   private async getCurrentAssetsCount(): Promise<number> {
     try {
-      const portfolioData = localStorage.getItem('portfolio');
-      if (portfolioData) {
-        const portfolio = JSON.parse(portfolioData);
+      const userId = localStorage.getItem('userId');
+      if (!userId) return 0;
+
+      // Priorizar datos específicos del usuario
+      const userPortfolioKey = `portfolio_${userId}`;
+      const userPortfolio = localStorage.getItem(userPortfolioKey);
+      if (userPortfolio) {
+        const portfolio = JSON.parse(userPortfolio);
         return Array.isArray(portfolio) ? portfolio.length : 0;
       }
 
-      // También verificar si hay datos del usuario actual
-      const userId = localStorage.getItem('userId');
-      if (userId) {
-        // Simular conteo de activos basado en portfolio del usuario
-        const userPortfolioKey = `portfolio_${userId}`;
-        const userPortfolio = localStorage.getItem(userPortfolioKey);
-        if (userPortfolio) {
-          const portfolio = JSON.parse(userPortfolio);
-          return Array.isArray(portfolio) ? portfolio.length : 0;
+      // Fallback: verificar datos generales del portfolio y migrarlos
+      const portfolioData = localStorage.getItem('portfolio');
+      if (portfolioData) {
+        const portfolio = JSON.parse(portfolioData);
+        if (Array.isArray(portfolio) && portfolio.length > 0) {
+          // Migrar datos generales a específicos del usuario
+          localStorage.setItem(userPortfolioKey, JSON.stringify(portfolio));
+          localStorage.removeItem('portfolio');
+          return portfolio.length;
         }
       }
 
