@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { FaEnvelope, FaLifeRing, FaQuestionCircle, FaCheckCircle, FaBug, FaLightbulb, FaClock, FaShieldAlt } from 'react-icons/fa';
 
 export default function Contact() {

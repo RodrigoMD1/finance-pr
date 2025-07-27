@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { FaChartLine, FaShieldAlt, FaGraduationCap, FaBitcoin, FaNewspaper, FaUsers, FaRocket, FaLightbulb, FaArrowRight, FaCheckCircle, FaStar, FaPlay, FaWallet, FaBookOpen, FaMobile, FaEnvelope, FaQuestionCircle, FaLifeRing } from 'react-icons/fa';
 import finanzasImg from '../assets/img/finance235.jpg';

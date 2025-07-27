@@ -128,7 +128,7 @@ class LocalStatsService {
   }
 
   // Generar datos de rendimiento por fecha
-  generatePerformanceData(userId: string, date: string): PerformanceDataPoint[] {
+  generatePerformanceData(userId: string, _date: string): PerformanceDataPoint[] {
     const portfolio = this.getPortfolioFromStorage(userId);
     
     return portfolio.map(item => {

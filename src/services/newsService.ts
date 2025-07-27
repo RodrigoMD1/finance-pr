@@ -285,5 +285,4 @@ class NewsService {
 
 // Exportar instancia singleton
 export const newsService = NewsService.getInstance();
-export { newsService };
 export default newsService;
