@@ -14,7 +14,7 @@ export const Navbarr = ({
   const name = localStorage.getItem('userName');
 
   return (
-    <nav className="px-4 py-2 shadow-md navbar bg-base-200 rounded-box">
+    <nav className="px-4 py-2 text-white shadow-md navbar bg-base-200 rounded-box">
       <div className="navbar-start">
         <div className="dropdown">
           <button tabIndex={0} className="btn btn-ghost lg:hidden" aria-label="Menú">
@@ -50,6 +50,11 @@ export const Navbarr = ({
                   <li>
                     <NavLink to="/subscriptions" className="flex items-center gap-2">
                       <FaBook /> Suscripciones
+                    </NavLink>
+                  </li>
+                  <li>
+                    <NavLink to="/aprendizaje" className="flex items-center gap-2">
+                      <FaBook /> Aprendizaje
                     </NavLink>
                   </li>
                 </ul>
@@ -106,6 +111,11 @@ export const Navbarr = ({
                 <li>
                   <NavLink to="/subscriptions" className="flex items-center gap-2">
                     <FaBook /> Suscripciones
+                  </NavLink>
+                </li>
+                <li>
+                  <NavLink to="/aprendizaje" className="flex items-center gap-2">
+                    <FaBook /> Aprendizaje
                   </NavLink>
                 </li>
               </ul>

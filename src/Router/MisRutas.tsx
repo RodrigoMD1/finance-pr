@@ -1,4 +1,5 @@
-import { HeroSection } from '../components/Layout/HeroSection';
+
+
 import Inicio from '../components/Inicio';
 import { Footer } from '../components/Footer';
 import { Navbarr } from '../components/Layout/Navbar';
@@ -11,6 +12,7 @@ import { Stadistics } from '../components/Stadistics';
 import { UserSettings } from '../components/UserSettings';
 import { VerifyEmail } from '../components/VerifyEmail';
 import { Reports } from '../components/Reports';
+import Aprendizaje from '../components/Aprendizaje';
 import { News } from '../components/News';
 import { UserManual } from '../components/UserManual';
 import { Subscriptions } from '../components/Subscriptions';
@@ -33,7 +35,7 @@ export const MisRutas = () => {
         return (
             <div className="flex items-center justify-center min-h-screen">
                 <div className="text-center">
-                    <div className="w-8 h-8 mx-auto mb-4 border-4 border-blue-700 border-t-transparent rounded-full animate-spin"></div>
+                    <div className="w-8 h-8 mx-auto mb-4 border-4 border-blue-700 rounded-full border-t-transparent animate-spin"></div>
                     <p className="text-gray-600">Verificando sesión...</p>
                 </div>
             </div>
@@ -42,7 +44,7 @@ export const MisRutas = () => {
 
     return (
         <BrowserRouter>
-            <HeroSection />
+           
             <Navbarr
                 onLoginClick={() => { setShowAuth(true); setAuthView('login'); }}
                 onLogoutClick={handleLogout}
@@ -99,9 +101,11 @@ export const MisRutas = () => {
                 <Route path='/settings' element={isAuthenticated ? <UserSettings /> : <Inicio />} />
                 <Route path='/verify-email' element={<VerifyEmail />} />
                 <Route path='/reports' element={isAuthenticated ? <Reports /> : <Inicio />} />
+
                 <Route path="/news" element={<News />} />
                 <Route path="/manual" element={<UserManual />} />
                 <Route path="/subscriptions" element={<Subscriptions />} />
+                <Route path="/aprendizaje" element={<Aprendizaje />} />
                 <Route path="/payment/success" element={<PaymentSuccess />} />
                 <Route path="/payment/failure" element={<PaymentFailure />} />
 
