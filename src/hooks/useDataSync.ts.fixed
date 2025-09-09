@@ -1,0 +1,85 @@
+import { useEffect, useState, useRef } from 'react';
+import { dataService } from '../services/dataService';
+
+/**
+ * Hook para inicializar y mantener sincronizados los datos del usuario
+ * Se debe usar en componentes principales que requieren datos consistentes
+ */
+export const useDataSync = () => {
+  const [isSyncing, setIsSyncing] = useState(false);
+  const [lastSync, setLastSync] = useState<Date | null>(null);
+  const syncInProgressRef = useRef(false);
+  const lastSyncTimeRef = useRef<Date | null>(null);
+
+  // Función independiente para sincronizar datos
+  const syncUserData = async () => {
+    const userId = localStorage.getItem('userId');
+    const token = localStorage.getItem('token');
+    
+    if (!userId || !token || syncInProgressRef.current) return;
+    
+    // Evitar sincronizaciones múltiples
+    syncInProgressRef.current = true;
+    setIsSyncing(true);
+    
+    try {
+      await dataService.initializeUserData(userId);
+      await dataService.cleanupObsoleteData();
+      
+      const newSyncTime = new Date();
+      lastSyncTimeRef.current = newSyncTime;
+      setLastSync(newSyncTime);
+    } catch (_error) {
+      // Error silencioso para evitar saturar la consola
+    } finally {
+      syncInProgressRef.current = false;
+      setIsSyncing(false);
+    }
+  };
+
+  useEffect(() => {
+    // Inicializar datos al montar el componente
+    syncUserData();
+
+    // Escuchar cambios en el localStorage
+    const handleStorageChange = (event: StorageEvent) => {
+      if (event.key === 'userId' || event.key === 'token') {
+        syncUserData();
+      }
+    };
+
+    // Escuchar eventos personalizados
+    const handleLogin = () => {
+      setTimeout(syncUserData, 300);
+    };
+
+    const handleDataRefresh = () => {
+      setTimeout(syncUserData, 100);
+    };
+
+    window.addEventListener('storage', handleStorageChange);
+    window.addEventListener('userLoggedIn', handleLogin);
+    window.addEventListener('refreshUserData', handleDataRefresh);
+
+    // Configurar sincronización periódica
+    const syncInterval = setInterval(() => {
+      const currentTime = new Date().getTime();
+      const lastSyncTime = lastSyncTimeRef.current?.getTime() || 0;
+      
+      // Sincronizar si han pasado más de 15 minutos desde la última sincronización
+      if (currentTime - lastSyncTime > 15 * 60 * 1000) {
+        syncUserData();
+      }
+    }, 900000); // Comprobar cada 15 minutos
+
+    // Limpieza
+    return () => {
+      window.removeEventListener('storage', handleStorageChange);
+      window.removeEventListener('userLoggedIn', handleLogin);
+      window.removeEventListener('refreshUserData', handleDataRefresh);
+      clearInterval(syncInterval);
+    };
+  }, []); // Dependencias vacías para ejecutarse solo al montar/desmontar
+
+  return { isSyncing, lastSync, syncData: syncUserData };
+};
