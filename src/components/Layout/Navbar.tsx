@@ -1,165 +1,172 @@
 import { NavLink } from "react-router-dom";
-import { FaUserCircle, FaSignOutAlt, FaSignInAlt, FaChartBar, FaFileAlt, FaHome, FaNewspaper, FaBook } from "react-icons/fa";
+import { FaUserCircle, FaSignOutAlt, FaSignInAlt, FaChartBar, FaFileAlt, FaHome, FaNewspaper, FaBook, FaBars, FaTimes, FaBitcoin } from "react-icons/fa";
+import { useState } from "react";
 
-export const Navbarr = ({
-  onLoginClick,
-  onLogoutClick,
-  isAuthenticated,
-}: {
+interface NavbarProps {
+  isAuthenticated: boolean;
   onLoginClick: () => void;
   onLogoutClick: () => void;
-  isAuthenticated: boolean;
-}) => {
-  const isLoggedIn = isAuthenticated;
-  const name = localStorage.getItem('userName');
+}
+
+const Navbar: React.FC<NavbarProps> = ({ isAuthenticated, onLoginClick, onLogoutClick }) => {
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const userName = localStorage.getItem('userName');
+
+  const toggleMobileMenu = () => {
+    setIsMobileMenuOpen(!isMobileMenuOpen);
+  };
+
+  const navigationItems = [
+    { to: "/inicio", icon: FaHome, label: "Inicio" },
+    { to: "/finance", icon: FaChartBar, label: "Finanzas" },
+    { to: "/reports", icon: FaFileAlt, label: "Reportes" },
+    { to: "/news", icon: FaNewspaper, label: "Noticias" },
+    { to: "/manual", icon: FaBook, label: "Manual" },
+  ];
 
   return (
-    <nav className="px-4 py-2 text-white shadow-md navbar bg-base-200 rounded-box">
-      <div className="navbar-start">
-        <div className="dropdown">
-          <button tabIndex={0} className="btn btn-ghost lg:hidden" aria-label="Menú">
-            <svg xmlns="http://www.w3.org/2000/svg" className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h8m-8 6h16" />
-            </svg>
-          </button>
-          <ul
-            tabIndex={0}
-            className="z-10 w-56 p-2 mt-3 shadow menu menu-sm dropdown-content bg-base-100 rounded-box"
-          >
-            <li>
-              <NavLink to="/inicio" className="flex items-center gap-2">
-                <FaHome /> Inicio
-              </NavLink>
-            </li>
-            <li>
-              <details>
-                <summary className="flex items-center gap-2">
-                  <FaBook /> Recursos
-                </summary>
-                <ul className="p-2">
-                  <li>
-                    <NavLink to="/news" className="flex items-center gap-2">
-                      <FaNewspaper /> Noticias
-                    </NavLink>
-                  </li>
-                  <li>
-                    <NavLink to="/manual" className="flex items-center gap-2">
-                      <FaBook /> Manual de Usuario
-                    </NavLink>
-                  </li>
-                  <li>
-                    <NavLink to="/subscriptions" className="flex items-center gap-2">
-                      <FaBook /> Suscripciones
-                    </NavLink>
-                  </li>
-                  <li>
-                    <NavLink to="/aprendizaje" className="flex items-center gap-2">
-                      <FaBook /> Aprendizaje
-                    </NavLink>
-                  </li>
-                </ul>
-              </details>
-            </li>
-            <li>
-              <NavLink to="/finance" className="flex items-center gap-2">
-                <FaFileAlt /> Finanzas
-              </NavLink>
-            </li>
-            {isLoggedIn && (
-              <>
-                <li>
-                  <NavLink to="/stadistics" className="flex items-center gap-2">
-                    <FaChartBar /> Estadísticas
-                  </NavLink>
-                </li>
-                <li>
-                  <NavLink to="/reports" className="flex items-center gap-2">
-                    <FaFileAlt /> Informes
-                  </NavLink>
-                </li>
-              </>
+    <nav className="bg-gray-900/95 backdrop-blur-sm sticky top-0 z-[9999] border-b border-orange-500/20 shadow-lg">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="flex justify-between items-center h-16">
+          {/* Logo */}
+          <div className="flex items-center">
+            <NavLink to="/inicio" className="flex items-center gap-3 hover:opacity-80 transition-opacity">
+              <div className="bg-gradient-to-br from-orange-500 to-orange-600 p-2 rounded-lg shadow-lg">
+                <FaBitcoin className="text-white text-xl" />
+              </div>
+              <span className="text-xl font-bold text-white">
+                FinancePro
+              </span>
+            </NavLink>
+          </div>
+
+          {/* Desktop Navigation */}
+          <div className="hidden md:block">
+            <div className="flex items-center space-x-2">
+              {navigationItems.map((item) => (
+                <NavLink
+                  key={item.to}
+                  to={item.to}
+                  className={({ isActive }) =>
+                    `flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
+                      isActive
+                        ? 'bg-orange-500 text-white shadow-lg'
+                        : 'text-gray-300 hover:text-white hover:bg-gray-700'
+                    }`
+                  }
+                >
+                  <item.icon className="text-lg" />
+                  {item.label}
+                </NavLink>
+              ))}
+            </div>
+          </div>
+
+          {/* Desktop Auth Section */}
+          <div className="hidden md:flex items-center space-x-4">
+            {isAuthenticated ? (
+              <div className="flex items-center space-x-3">
+                <div className="flex items-center gap-2 text-gray-300">
+                  <FaUserCircle className="text-lg text-orange-500" />
+                  <span className="text-sm font-medium">{userName || 'Usuario'}</span>
+                </div>
+                <button
+                  onClick={onLogoutClick}
+                  className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-gray-300 hover:text-white bg-gray-700 hover:bg-red-600 rounded-lg transition-all duration-200"
+                >
+                  <FaSignOutAlt />
+                  Salir
+                </button>
+              </div>
+            ) : (
+              <button
+                onClick={onLoginClick}
+                className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-white bg-orange-500 hover:bg-orange-600 rounded-lg transition-all duration-200 shadow-lg"
+              >
+                <FaSignInAlt />
+                Iniciar Sesión
+              </button>
             )}
-          </ul>
+          </div>
+
+          {/* Mobile menu button */}
+          <div className="md:hidden">
+            <button
+              onClick={toggleMobileMenu}
+              className="p-2 rounded-lg text-gray-300 hover:text-white hover:bg-gray-700 transition-colors"
+            >
+              {isMobileMenuOpen ? <FaTimes className="text-xl" /> : <FaBars className="text-xl" />}
+            </button>
+          </div>
         </div>
-        <NavLink to="/inicio" className="text-2xl font-bold tracking-wide normal-case btn btn-ghost">
-          <span className="text-primary">FinancePR</span>
-        </NavLink>
-      </div>
-      <div className="hidden navbar-center lg:flex">
-        <ul className="gap-2 px-1 menu menu-horizontal">
-          <li>
-            <NavLink to="/inicio" className="flex items-center gap-2">
-              <FaHome /> Inicio
-            </NavLink>
-          </li>
-          <li>
-            <details>
-              <summary className="flex items-center gap-2">
-                <FaBook /> Recursos
-              </summary>
-              <ul className="p-2">
-                <li>
-                  <NavLink to="/news" className="flex items-center gap-2">
-                    <FaNewspaper /> Noticias
-                  </NavLink>
-                </li>
-                <li>
-                  <NavLink to="/manual" className="flex items-center gap-2">
-                    <FaBook /> Manual de Usuario
-                  </NavLink>
-                </li>
-                <li>
-                  <NavLink to="/subscriptions" className="flex items-center gap-2">
-                    <FaBook /> Suscripciones
-                  </NavLink>
-                </li>
-                <li>
-                  <NavLink to="/aprendizaje" className="flex items-center gap-2">
-                    <FaBook /> Aprendizaje
-                  </NavLink>
-                </li>
-              </ul>
-            </details>
-          </li>
-          <li>
-            <NavLink to="/finance" className="flex items-center gap-2">
-              <FaFileAlt /> Finanzas
-            </NavLink>
-          </li>
-          {isLoggedIn && (
-            <>
-              <li>
-                <NavLink to="/stadistics" className="flex items-center gap-2">
-                  <FaChartBar /> Estadísticas
+
+        {/* Mobile Navigation */}
+        {isMobileMenuOpen && (
+          <>
+            {/* Overlay */}
+            <div 
+              className="fixed inset-0 bg-black/50 backdrop-blur-sm z-[9998] md:hidden"
+              onClick={() => setIsMobileMenuOpen(false)}
+            />
+            {/* Menu */}
+            <div className="md:hidden absolute top-full left-0 right-0 z-[10000]">
+              <div className="mx-2 px-2 pt-2 pb-3 space-y-1 bg-gray-900/98 backdrop-blur-xl rounded-lg mt-2 border border-orange-500/20 shadow-2xl">
+              {navigationItems.map((item) => (
+                <NavLink
+                  key={item.to}
+                  to={item.to}
+                  onClick={() => setIsMobileMenuOpen(false)}
+                  className={({ isActive }) =>
+                    `flex items-center gap-3 px-3 py-2 rounded-lg text-base font-medium transition-all duration-200 ${
+                      isActive
+                        ? 'bg-orange-500 text-white shadow-lg'
+                        : 'text-gray-300 hover:text-white hover:bg-gray-700'
+                    }`
+                  }
+                >
+                  <item.icon className="text-lg" />
+                  {item.label}
                 </NavLink>
-              </li>
-              <li>
-                <NavLink to="/reports" className="flex items-center gap-2">
-                  <FaFileAlt /> Informes
-                </NavLink>
-              </li>
-            </>
-          )}
-        </ul>
-      </div>
-      <div className="flex items-center gap-3 navbar-end">
-        {isLoggedIn && name && (
-          <span className="flex items-center gap-2 px-3 py-1 text-sm font-medium rounded-full bg-info/20 text-info">
-            <FaUserCircle className="text-lg" />
-            <span>Conectado como:</span>
-            <strong>{name}</strong>
-          </span>
-        )}
-        {isLoggedIn ? (
-          <button className="flex items-center gap-2 btn btn-error btn-sm" onClick={onLogoutClick}>
-            <FaSignOutAlt /> Cerrar Sesión
-          </button>
-        ) : (
-          <button className="flex items-center gap-2 btn btn-success btn-sm" onClick={onLoginClick}>
-            <FaSignInAlt /> Iniciar Sesión
-          </button>
+              ))}
+              
+              <div className="border-t border-orange-500/20 pt-3 mt-3">
+                {isAuthenticated ? (
+                  <div className="space-y-2">
+                    <div className="flex items-center gap-3 px-3 py-2 text-gray-300">
+                      <FaUserCircle className="text-lg text-orange-500" />
+                      <span className="text-base font-medium">{userName || 'Usuario'}</span>
+                    </div>
+                    <button
+                      onClick={() => {
+                        onLogoutClick();
+                        setIsMobileMenuOpen(false);
+                      }}
+                      className="flex items-center gap-3 w-full px-3 py-2 text-base font-medium text-gray-300 hover:text-white hover:bg-red-600 rounded-lg transition-all duration-200"
+                    >
+                      <FaSignOutAlt />
+                      Salir
+                    </button>
+                  </div>
+                ) : (
+                  <button
+                    onClick={() => {
+                      onLoginClick();
+                      setIsMobileMenuOpen(false);
+                    }}
+                    className="flex items-center gap-3 w-full px-3 py-2 text-base font-medium text-white bg-orange-500 hover:bg-orange-600 rounded-lg transition-all duration-200 shadow-lg"
+                  >
+                    <FaSignInAlt />
+                    Iniciar Sesión
+                  </button>
+                )}
+              </div>
+            </div>
+          </div>
+          </>
         )}
       </div>
     </nav>
   );
 };
+
+export default Navbar;

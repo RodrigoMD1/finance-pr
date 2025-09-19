@@ -2,7 +2,7 @@
 
 import Inicio from '../components/Inicio';
 import { Footer } from '../components/Footer';
-import { Navbarr } from '../components/Layout/Navbar';
+import Navbar from '../components/Layout/Navbar';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import { useState } from 'react';
 import { Login } from '../components/Login';
@@ -45,7 +45,7 @@ export const MisRutas = () => {
     return (
         <BrowserRouter>
            
-            <Navbarr
+            <Navbar
                 onLoginClick={() => { setShowAuth(true); setAuthView('login'); }}
                 onLogoutClick={handleLogout}
                 isAuthenticated={isAuthenticated}

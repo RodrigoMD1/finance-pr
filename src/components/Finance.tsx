@@ -4,6 +4,7 @@ import { PortfolioItem } from "../types/PortfolioItem";
 import { fetchWithAuth } from '../utils/auth';
 import { useSubscriptionLimits } from '../hooks/useSubscriptionLimits';
 import { SubscriptionBanner } from './SubscriptionBanner';
+import { FaChartLine, FaWallet, FaChartBar, FaDollarSign } from 'react-icons/fa';
 import toast from 'react-hot-toast';
 
 export const Finance = () => {
@@ -118,16 +119,85 @@ export const Finance = () => {
     }
   };
 
+  // Calcular estadísticas del portafolio
+  const totalValue = portfolio.reduce((sum, item) => sum + (item.cantidad * item.precio), 0);
+  const totalAssets = portfolio.length;
+  const assetTypes = [...new Set(portfolio.map(item => item.tipoActivo))].length;
+
   return (
-    <div>
-      {/* Banner de suscripción */}
-      {usage && <SubscriptionBanner usage={usage} />}
-      
-      <FinanceTable
-        items={portfolio}
-        onDeleteItem={handleDeleteItem}
-        onAddItem={handleAddItem}
-      />
+    <div className="min-h-screen bg-gradient-to-br from-industrial-charcoal via-industrial-iron to-industrial-charcoal">
+      <div className="container mx-auto px-4 py-8">
+        {/* Header */}
+        <div className="text-center mb-8">
+          <h1 className="text-4xl font-bold text-industrial-white mb-4">
+            <FaChartLine className="inline mr-3 text-industrial-copper" />
+            Panel Financiero
+          </h1>
+          <p className="text-industrial-steel text-lg">
+            Gestiona tu portafolio de inversiones de manera inteligente
+          </p>
+        </div>
+
+        {/* Banner de suscripción */}
+        {usage && (
+          <div className="mb-8">
+            <SubscriptionBanner usage={usage} />
+          </div>
+        )}
+
+        {/* Estadísticas del portafolio */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+          <div className="glass-effect p-6 rounded-xl border border-industrial-copper/20">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-industrial-steel text-sm font-medium">Valor Total</p>
+                <p className="text-2xl font-bold text-industrial-white">
+                  ${totalValue.toLocaleString('es-AR', {
+                    minimumFractionDigits: 2,
+                    maximumFractionDigits: 2,
+                  })}
+                </p>
+              </div>
+              <div className="bg-gradient-to-br from-industrial-copper to-industrial-copper/70 p-3 rounded-lg">
+                <FaDollarSign className="text-white text-xl" />
+              </div>
+            </div>
+          </div>
+
+          <div className="glass-effect p-6 rounded-xl border border-industrial-copper/20">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-industrial-steel text-sm font-medium">Total de Activos</p>
+                <p className="text-2xl font-bold text-industrial-white">{totalAssets}</p>
+              </div>
+              <div className="bg-gradient-to-br from-green-500 to-green-600 p-3 rounded-lg">
+                <FaWallet className="text-white text-xl" />
+              </div>
+            </div>
+          </div>
+
+          <div className="glass-effect p-6 rounded-xl border border-industrial-copper/20">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-industrial-steel text-sm font-medium">Tipos de Activos</p>
+                <p className="text-2xl font-bold text-industrial-white">{assetTypes}</p>
+              </div>
+              <div className="bg-gradient-to-br from-blue-500 to-blue-600 p-3 rounded-lg">
+                <FaChartBar className="text-white text-xl" />
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Tabla de finanzas */}
+        <div className="glass-effect rounded-xl border border-industrial-copper/20 overflow-hidden">
+          <FinanceTable
+            items={portfolio}
+            onDeleteItem={handleDeleteItem}
+            onAddItem={handleAddItem}
+          />
+        </div>
+      </div>
     </div>
   );
 };

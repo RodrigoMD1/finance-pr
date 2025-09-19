@@ -54,8 +54,8 @@ export default function Aprendizaje() {
         ))}
       </div>
       <div className="flex flex-row justify-center gap-8 mt-8">
-        <img src={financeImg2} alt="Aprendizaje" className="object-cover w-full max-w-xs h-40 img-feature" />
-        <img src={finanzasImg} alt="Recursos" className="object-cover w-full max-w-xs h-40 img-feature" />
+        <img src={financeImg2} alt="Aprendizaje" className="object-cover w-full h-40 max-w-xs img-feature" />
+        <img src={finanzasImg} alt="Recursos" className="object-cover w-full h-40 max-w-xs img-feature" />
       </div>
       <div className="mt-8 text-center">
         <p className="text-muted">Explora más recursos y aprende sobre economía y finanzas para tomar mejores decisiones en tu empresa.</p>

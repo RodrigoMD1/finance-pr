@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { FaUser, FaEnvelope, FaLock, FaUserPlus, FaSpinner, FaCheckCircle, FaSignInAlt } from 'react-icons/fa';
 
 export function Register() {
   const [email, setEmail] = useState('');
@@ -35,74 +36,150 @@ export function Register() {
 
   if (success) {
     return (
-      <div className="max-w-md p-6 mx-auto mt-10 text-center bg-white shadow-lg rounded-xl">
-        <h2 className="mb-2 text-2xl font-bold text-green-700">¡Registro exitoso!</h2>
-        <div className="mb-2 text-gray-700">{message}</div>
-        <a href="/login" className="inline-block px-6 py-2 mt-4 font-semibold text-white transition-colors bg-blue-700 rounded-lg shadow hover:bg-blue-800">
-          Ir a iniciar sesión
-        </a>
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-industrial-charcoal via-industrial-iron to-industrial-charcoal px-4">
+        <div className="w-full max-w-md">
+          <div className="glass-effect p-8 rounded-2xl border border-green-400/20 text-center">
+            <div className="mx-auto w-16 h-16 bg-gradient-to-br from-green-500 to-green-600 rounded-full flex items-center justify-center mb-6 shadow-lg">
+              <FaCheckCircle className="text-white text-2xl" />
+            </div>
+            <h2 className="text-3xl font-bold text-industrial-white mb-4">
+              ¡Registro exitoso!
+            </h2>
+            <p className="text-industrial-steel mb-6 leading-relaxed">
+              {message}
+            </p>
+            <a 
+              href="/login" 
+              className="industrial-button inline-flex items-center gap-2 px-6 py-3 font-semibold"
+            >
+              <FaSignInAlt />
+              Ir a iniciar sesión
+            </a>
+          </div>
+        </div>
       </div>
     );
   }
 
   return (
-    <form
-      onSubmit={handleSubmit}
-      className="flex flex-col max-w-md gap-6 p-8 mx-auto mt-10 bg-white shadow-lg rounded-xl"
-      style={{ fontFamily: "Inter, Roboto, Arial, sans-serif" }}
-    >
-      <h2 className="mb-2 text-2xl font-bold text-center text-blue-700">Crear cuenta</h2>
-      <div>
-        <label className="block mb-1 text-sm font-semibold text-gray-700">Nombre</label>
-        <input
-          type="text"
-          placeholder="Tu nombre"
-          value={name}
-          onChange={e => setName(e.target.value)}
-          required
-          className="w-full px-4 py-2 text-black border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-300 bg-gray-50"
-        />
-      </div>
-      <div>
-        <label className="block mb-1 text-sm font-semibold text-gray-700">Correo electrónico</label>
-        <input
-          type="email"
-          placeholder="ejemplo@email.com"
-          value={email}
-          onChange={e => setEmail(e.target.value)}
-          required
-          className="w-full px-4 py-2 text-black border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-300 bg-gray-50"
-        />
-      </div>
-      <div>
-        <label className="block mb-1 text-sm font-semibold text-gray-700">Contraseña</label>
-        <input
-          type="password"
-          placeholder="Contraseña"
-          value={password}
-          onChange={e => setPassword(e.target.value)}
-          required
-          className="w-full px-4 py-2 text-black border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-300 bg-gray-50"
-        />
-      </div>
-      <button
-        type="submit"
-        className="w-full py-2 mt-2 font-semibold text-white transition-colors bg-blue-700 rounded-lg shadow hover:bg-blue-800 disabled:opacity-50 disabled:cursor-not-allowed"
-        disabled={loading}
-      >
-        {loading ? (
-          <div className="flex items-center justify-center">
-            <div className="w-4 h-4 mr-2 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-            Registrando...
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-industrial-charcoal via-industrial-iron to-industrial-charcoal px-4">
+      <div className="w-full max-w-md">
+        <div className="glass-effect p-8 rounded-2xl border border-industrial-copper/20">
+          {/* Header */}
+          <div className="text-center mb-8">
+            <div className="mx-auto w-16 h-16 bg-gradient-to-br from-industrial-copper to-industrial-copper/70 rounded-full flex items-center justify-center mb-4 shadow-lg">
+              <FaUserPlus className="text-white text-2xl" />
+            </div>
+            <h2 className="text-3xl font-bold text-industrial-white mb-2">
+              Crear cuenta
+            </h2>
+            <p className="text-industrial-steel">
+              Únete a la plataforma financiera más completa
+            </p>
           </div>
-        ) : (
-          'Registrarse'
-        )}
-      </button>
-      {message && (
-        <div className="font-medium text-center text-red-600">{message}</div>
-      )}
-     
-    </form>
+
+          <form onSubmit={handleSubmit} className="space-y-6">
+            {/* Name Field */}
+            <div>
+              <label className="block text-sm font-semibold text-industrial-white mb-2">
+                Nombre completo
+              </label>
+              <div className="relative">
+                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                  <FaUser className="text-industrial-copper" />
+                </div>
+                <input
+                  type="text"
+                  placeholder="Tu nombre completo"
+                  value={name}
+                  onChange={e => setName(e.target.value)}
+                  required
+                  className="industrial-input pl-10"
+                />
+              </div>
+            </div>
+
+            {/* Email Field */}
+            <div>
+              <label className="block text-sm font-semibold text-industrial-white mb-2">
+                Correo electrónico
+              </label>
+              <div className="relative">
+                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                  <FaEnvelope className="text-industrial-copper" />
+                </div>
+                <input
+                  type="email"
+                  placeholder="ejemplo@email.com"
+                  value={email}
+                  onChange={e => setEmail(e.target.value)}
+                  required
+                  className="industrial-input pl-10"
+                />
+              </div>
+            </div>
+
+            {/* Password Field */}
+            <div>
+              <label className="block text-sm font-semibold text-industrial-white mb-2">
+                Contraseña
+              </label>
+              <div className="relative">
+                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                  <FaLock className="text-industrial-copper" />
+                </div>
+                <input
+                  type="password"
+                  placeholder="Contraseña segura"
+                  value={password}
+                  onChange={e => setPassword(e.target.value)}
+                  required
+                  className="industrial-input pl-10"
+                />
+              </div>
+            </div>
+
+            {/* Error Message */}
+            {message && !success && (
+              <div className="p-4 bg-red-500/20 border border-red-500/30 rounded-lg text-red-300 text-sm text-center">
+                {message}
+              </div>
+            )}
+
+            {/* Submit Button */}
+            <button
+              type="submit"
+              disabled={loading}
+              className="industrial-button w-full py-3 flex items-center justify-center gap-2 text-lg font-semibold"
+            >
+              {loading ? (
+                <>
+                  <FaSpinner className="animate-spin" />
+                  Registrando...
+                </>
+              ) : (
+                <>
+                  <FaUserPlus />
+                  Crear cuenta
+                </>
+              )}
+            </button>
+          </form>
+
+          {/* Footer */}
+          <div className="mt-6 text-center">
+            <p className="text-industrial-steel text-sm">
+              ¿Ya tienes una cuenta?{' '}
+              <a 
+                href="/login" 
+                className="text-industrial-copper hover:text-industrial-copper/80 font-semibold transition-colors"
+              >
+                Inicia sesión aquí
+              </a>
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
   );
 }

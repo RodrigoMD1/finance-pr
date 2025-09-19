@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { FaEnvelope, FaLock, FaSignInAlt, FaSpinner } from 'react-icons/fa';
 
 export function Login({ onLoginSuccess }: { onLoginSuccess: () => void }) {
   const [email, setEmail] = useState('');
@@ -35,50 +36,104 @@ export function Login({ onLoginSuccess }: { onLoginSuccess: () => void }) {
   };
 
   return (
-    <form
-      onSubmit={handleSubmit}
-      className="flex flex-col max-w-md gap-6 p-8 mx-auto mt-16 bg-white shadow-lg rounded-xl"
-      style={{ fontFamily: "Inter, Roboto, Arial, sans-serif" }}
-    >
-      <h2 className="mb-2 text-2xl font-bold text-center text-blue-700">Iniciar sesión</h2>
-      <div>
-        <label className="block mb-1 text-sm font-semibold text-gray-700">Correo electrónico</label>
-        <input
-          type="email"
-          placeholder="ejemplo@email.com"
-          value={email}
-          onChange={e => setEmail(e.target.value)}
-          required
-          className="w-full px-4 py-2 text-black border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-300 bg-gray-50"
-        />
-      </div>
-      <div>
-        <label className="block mb-1 text-sm font-semibold text-gray-700">Contraseña</label>
-        <input
-          type="password"
-          placeholder="Contraseña"
-          value={password}
-          onChange={e => setPassword(e.target.value)}
-          required
-          className="w-full px-4 py-2 text-black border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-300 bg-gray-50"
-        />
-      </div>
-      {error && <div className="font-medium text-center text-red-600">{error}</div>}
-      <button
-        className="w-full py-2 mt-2 font-semibold text-white transition-colors bg-blue-700 rounded-lg shadow hover:bg-blue-800 disabled:opacity-50 disabled:cursor-not-allowed"
-        type="submit"
-        disabled={loading}
-      >
-        {loading ? (
-          <div className="flex items-center justify-center">
-            <div className="w-4 h-4 mr-2 border-2 border-white rounded-full border-t-transparent animate-spin"></div>
-            Iniciando sesión...
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-industrial-charcoal via-industrial-iron to-industrial-charcoal px-4">
+      <div className="w-full max-w-md">
+        <div className="glass-effect p-8 rounded-2xl border border-industrial-copper/20">
+          {/* Header */}
+          <div className="text-center mb-8">
+            <div className="mx-auto w-16 h-16 bg-gradient-to-br from-industrial-copper to-industrial-copper/70 rounded-full flex items-center justify-center mb-4 shadow-lg">
+              <FaSignInAlt className="text-white text-2xl" />
+            </div>
+            <h2 className="text-3xl font-bold text-industrial-white mb-2">
+              Bienvenido de vuelta
+            </h2>
+            <p className="text-industrial-steel">
+              Inicia sesión en tu cuenta
+            </p>
           </div>
-        ) : (
-          'Iniciar sesión'
-        )}
-      </button>
-      
-    </form>
+
+          <form onSubmit={handleSubmit} className="space-y-6">
+            {/* Email Field */}
+            <div>
+              <label className="block text-sm font-semibold text-industrial-white mb-2">
+                Correo electrónico
+              </label>
+              <div className="relative">
+                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                  <FaEnvelope className="text-industrial-copper" />
+                </div>
+                <input
+                  type="email"
+                  placeholder="ejemplo@email.com"
+                  value={email}
+                  onChange={e => setEmail(e.target.value)}
+                  required
+                  className="industrial-input pl-10"
+                />
+              </div>
+            </div>
+
+            {/* Password Field */}
+            <div>
+              <label className="block text-sm font-semibold text-industrial-white mb-2">
+                Contraseña
+              </label>
+              <div className="relative">
+                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                  <FaLock className="text-industrial-copper" />
+                </div>
+                <input
+                  type="password"
+                  placeholder="Contraseña"
+                  value={password}
+                  onChange={e => setPassword(e.target.value)}
+                  required
+                  className="industrial-input pl-10"
+                />
+              </div>
+            </div>
+
+            {/* Error Message */}
+            {error && (
+              <div className="p-4 bg-red-500/20 border border-red-500/30 rounded-lg text-red-300 text-sm text-center">
+                {error}
+              </div>
+            )}
+
+            {/* Submit Button */}
+            <button
+              type="submit"
+              disabled={loading}
+              className="industrial-button w-full py-3 flex items-center justify-center gap-2 text-lg font-semibold"
+            >
+              {loading ? (
+                <>
+                  <FaSpinner className="animate-spin" />
+                  Iniciando sesión...
+                </>
+              ) : (
+                <>
+                  <FaSignInAlt />
+                  Iniciar sesión
+                </>
+              )}
+            </button>
+          </form>
+
+          {/* Footer */}
+          <div className="mt-6 text-center">
+            <p className="text-industrial-steel text-sm">
+              ¿No tienes una cuenta?{' '}
+              <a 
+                href="/register" 
+                className="text-industrial-copper hover:text-industrial-copper/80 font-semibold transition-colors"
+              >
+                Regístrate aquí
+              </a>
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
   );
 }

@@ -37,28 +37,28 @@ export const UserManual = () => {
       case 'inicio':
         return (
           <div className="space-y-6">
-            <div className="p-6 rounded-lg bg-gradient-to-r from-primary/10 to-secondary/10">
-              <h2 className="flex items-center gap-3 mb-4 text-3xl font-bold text-primary">
-                <FaBook className="text-4xl" />
+            <div className="p-6 rounded-lg bg-gradient-to-r from-industrial-copper/20 to-industrial-iron/20 border border-industrial-copper/30">
+              <h2 className="flex items-center gap-3 mb-4 text-3xl font-bold text-industrial-white">
+                <FaBook className="text-4xl text-industrial-copper" />
                 Bienvenido a FinancePR
               </h2>
-              <p className="mb-4 text-lg leading-relaxed">
+              <p className="mb-4 text-lg leading-relaxed text-industrial-steel">
                 FinancePR es tu plataforma integral para la gestión de inversiones y finanzas personales. 
                 Este manual te guiará paso a paso para aprovechar al máximo todas las funcionalidades.
               </p>
               <div className="grid gap-4 md:grid-cols-2">
-                <div className="p-4 border rounded-lg bg-base-100 border-primary/20">
-                  <h3 className="mb-2 text-xl font-semibold text-primary">🎯 Objetivos</h3>
-                  <ul className="space-y-1 text-sm">
+                <div className="p-4 border rounded-lg glass-effect border-industrial-copper/20">
+                  <h3 className="mb-2 text-xl font-semibold text-industrial-copper">🎯 Objetivos</h3>
+                  <ul className="space-y-1 text-sm text-industrial-steel">
                     <li>• Gestionar tu portafolio de inversiones</li>
                     <li>• Monitorear el rendimiento de tus activos</li>
                     <li>• Acceder a noticias financieras actualizadas</li>
                     <li>• Generar reportes e informes detallados</li>
                   </ul>
                 </div>
-                <div className="p-4 border rounded-lg bg-base-100 border-secondary/20">
-                  <h3 className="mb-2 text-xl font-semibold text-secondary">⚡ Características</h3>
-                  <ul className="space-y-1 text-sm">
+                <div className="p-4 border rounded-lg glass-effect border-industrial-copper/20">
+                  <h3 className="mb-2 text-xl font-semibold text-industrial-copper">⚡ Características</h3>
+                  <ul className="space-y-1 text-sm text-industrial-steel">
                     <li>• Interfaz intuitiva y moderna</li>
                     <li>• Datos en tiempo real</li>
                     <li>• Múltiples planes de suscripción</li>
@@ -474,14 +474,15 @@ export const UserManual = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-base-100 to-base-200">
+    <div className="min-h-screen bg-gradient-to-br from-industrial-charcoal via-industrial-iron to-industrial-charcoal">
       <div className="container px-4 py-8 mx-auto max-w-7xl">
         {/* Header */}
         <div className="mb-8 text-center">
-          <h1 className="mb-4 text-4xl font-bold text-primary">
-            📖 Manual de Usuario - FinancePR
+          <h1 className="mb-4 text-4xl font-bold text-industrial-white">
+            <FaBook className="inline mr-3 text-industrial-copper" />
+            Manual de Usuario - FinancePR
           </h1>
-          <p className="text-lg text-base-content/70">
+          <p className="text-lg text-industrial-steel">
             Guía completa para aprovechar al máximo tu plataforma de inversiones
           </p>
         </div>
@@ -489,8 +490,8 @@ export const UserManual = () => {
         <div className="flex flex-col gap-6 lg:flex-row">
           {/* Sidebar Navigation */}
           <div className="lg:w-1/4">
-            <div className="sticky p-6 rounded-lg top-4 bg-base-100 shadow-xl">
-              <h3 className="mb-4 text-lg font-semibold">Índice de Contenidos</h3>
+            <div className="sticky p-6 rounded-lg top-4 glass-effect border border-industrial-copper/20">
+              <h3 className="mb-4 text-lg font-semibold text-industrial-white">Índice de Contenidos</h3>
               <nav className="space-y-2">
                 {sections.map((section) => {
                   const IconComponent = section.icon;
@@ -500,8 +501,8 @@ export const UserManual = () => {
                       onClick={() => setActiveSection(section.id)}
                       className={`w-full flex items-center gap-3 p-3 text-left rounded-lg transition-all duration-200 ${
                         activeSection === section.id
-                          ? 'bg-primary text-primary-content shadow-md transform scale-105'
-                          : 'hover:bg-base-200 text-base-content'
+                          ? 'bg-industrial-copper text-white shadow-md transform scale-105'
+                          : 'hover:bg-industrial-iron/30 text-industrial-steel hover:text-industrial-white'
                       }`}
                     >
                       <IconComponent className="text-lg" />
@@ -518,18 +519,18 @@ export const UserManual = () => {
 
           {/* Main Content */}
           <div className="lg:w-3/4">
-            <div className="p-8 rounded-lg bg-base-100 shadow-xl">
+            <div className="p-8 rounded-lg glass-effect border border-industrial-copper/20">
               {renderSection()}
             </div>
           </div>
         </div>
 
         {/* Footer */}
-        <div className="p-6 mt-8 text-center rounded-lg bg-primary/10">
-          <p className="text-sm text-base-content/70">
+        <div className="p-6 mt-8 text-center rounded-lg glass-effect border border-industrial-copper/20">
+          <p className="text-sm text-industrial-steel">
             ¿Necesitas ayuda adicional? Este manual se actualiza constantemente. 
             <br />
-            Versión 1.0 - Última actualización: Julio 2025
+            <span className="text-industrial-copper font-medium">Versión 1.0 - Última actualización: Septiembre 2025</span>
           </p>
         </div>
       </div>

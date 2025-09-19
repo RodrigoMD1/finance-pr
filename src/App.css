@@ -1,33 +1,46 @@
-/* Paleta corporativa formal y moderna */
+/* Paleta Industrial Moderna - Diseño de Interiores */
 :root {
-  --color-primary: #183153; /* azul petróleo */
-  --color-secondary: #c47f2a; /* cobre/dorado */
-  --color-bg: #e9ecef; /* gris claro */
-  --color-card: #f8f9fa; /* blanco suave */
-  --color-accent: #2d3a4a; /* azul grisáceo */
-  --color-text: #23272b; /* gris oscuro */
-  --color-muted: #6c757d; /* gris medio */
+  --color-primary: #1a1a1a; /* charcoal black */
+  --color-secondary: #cd853f; /* copper accent */
+  --color-bg: #e2e8f0; /* concrete gray */
+  --color-card: #ffffff; /* pure white */
+  --color-accent: #2d3748; /* iron blue */
+  --color-text: #1a1a1a; /* charcoal black */
+  --color-muted: #718096; /* ash gray */
+  --color-steel: #4a5568; /* steel gray */
+  --color-surface: #f7fafc; /* light surface */
 }
 
 body {
   background: var(--color-bg);
   color: var(--color-text);
-  font-family: 'Montserrat', 'Segoe UI', Arial, sans-serif;
+  font-family: 'Inter', 'Roboto', system-ui, -apple-system, sans-serif;
+  font-weight: 400;
+  line-height: 1.6;
 }
 
 h1, h2, h3, h4 {
   color: var(--color-primary);
-  font-family: 'Montserrat', 'Segoe UI', Arial, sans-serif;
+  font-family: 'Inter', 'Roboto', system-ui, -apple-system, sans-serif;
+  font-weight: 700;
+  letter-spacing: -0.025em;
 }
 
 
 .card {
   background: var(--color-card);
-  border-radius: 1rem;
-  box-shadow: 0 2px 16px rgba(24,49,83,0.10);
+  border-radius: 0.75rem;
+  box-shadow: 0 4px 20px rgba(26,26,26,0.08);
   padding: 2rem;
   margin-bottom: 2rem;
-  border: 1px solid var(--color-accent);
+  border: 1px solid var(--color-steel);
+  backdrop-filter: blur(10px);
+  transition: all 0.3s ease;
+}
+
+.card:hover {
+  box-shadow: 0 8px 32px rgba(26,26,26,0.12);
+  transform: translateY(-2px);
 }
 
 
@@ -35,47 +48,76 @@ h1, h2, h3, h4 {
   background: var(--color-primary);
   color: #fff;
   border-radius: 0.5rem;
-  padding: 0.75rem 2rem;
+  padding: 0.875rem 2.5rem;
   font-weight: 600;
-  font-family: 'Montserrat', 'Segoe UI', Arial, sans-serif;
-  letter-spacing: 0.5px;
-  transition: background 0.2s;
+  font-family: 'Inter', 'Roboto', system-ui, -apple-system, sans-serif;
+  letter-spacing: 0.025em;
+  transition: all 0.3s ease;
+  border: 2px solid var(--color-primary);
+  box-shadow: 0 2px 8px rgba(26,26,26,0.15);
 }
 .btn-primary:hover {
   background: var(--color-secondary);
-  color: var(--color-primary);
+  border-color: var(--color-secondary);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 16px rgba(205,133,63,0.25);
 }
 
 .btn-secondary {
-  background: var(--color-card);
+  background: transparent;
   color: var(--color-primary);
-  border: 2px solid var(--color-secondary);
+  border: 2px solid var(--color-steel);
   border-radius: 0.5rem;
-  padding: 0.75rem 2rem;
+  padding: 0.875rem 2.5rem;
   font-weight: 600;
-  font-family: 'Montserrat', 'Segoe UI', Arial, sans-serif;
-  letter-spacing: 0.5px;
-  transition: background 0.2s;
+  font-family: 'Inter', 'Roboto', system-ui, -apple-system, sans-serif;
+  letter-spacing: 0.025em;
+  transition: all 0.3s ease;
 }
 .btn-secondary:hover {
-  background: var(--color-secondary);
+  background: var(--color-primary);
   color: #fff;
+  border-color: var(--color-primary);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 16px rgba(26,26,26,0.15);
 }
 
 
 .img-feature {
-  border-radius: 1rem;
-  box-shadow: 0 2px 16px rgba(24,49,83,0.14);
-  border: 3px solid var(--color-secondary);
+  border-radius: 0.75rem;
+  box-shadow: 0 8px 32px rgba(26,26,26,0.15);
+  border: 2px solid var(--color-steel);
   margin-bottom: 1.5rem;
+  transition: all 0.3s ease;
 }
 
+.img-feature:hover {
+  transform: scale(1.02);
+  box-shadow: 0 12px 40px rgba(26,26,26,0.2);
+}
 
 .section {
-  margin-bottom: 3rem;
+  margin-bottom: 4rem;
 }
-
 
 .text-muted {
   color: var(--color-muted);
+}
+
+/* Elementos industriales adicionales */
+.industrial-bg {
+  background: linear-gradient(135deg, var(--color-surface) 0%, var(--color-bg) 100%);
+}
+
+.steel-border {
+  border: 1px solid var(--color-steel);
+}
+
+.copper-accent {
+  color: var(--color-secondary);
+}
+
+.glass-effect {
+  backdrop-filter: blur(12px);
+  background: rgba(255, 255, 255, 0.9);
 }
