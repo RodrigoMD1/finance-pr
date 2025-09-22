@@ -1,28 +1,37 @@
-import { NavLink } from "react-router-dom";
-import { FaUserCircle, FaSignOutAlt, FaSignInAlt, FaChartBar, FaFileAlt, FaHome, FaNewspaper, FaBook, FaBars, FaTimes, FaBitcoin } from "react-icons/fa";
+import { NavLink, useLocation } from "react-router-dom";
+import { FaUserCircle, FaSignOutAlt, FaSignInAlt, FaChartBar, FaFileAlt, FaHome, FaNewspaper, FaBook, FaBars, FaTimes, FaBitcoin, FaCrown, FaUniversity, FaChevronDown, FaFolderOpen } from "react-icons/fa";
 import { useState } from "react";
 
 interface NavbarProps {
   isAuthenticated: boolean;
-  onLoginClick: () => void;
   onLogoutClick: () => void;
 }
 
-const Navbar: React.FC<NavbarProps> = ({ isAuthenticated, onLoginClick, onLogoutClick }) => {
+const Navbar: React.FC<NavbarProps> = ({ isAuthenticated, onLogoutClick }) => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isResourcesMobileOpen, setIsResourcesMobileOpen] = useState(false);
   const userName = localStorage.getItem('userName');
+  const location = useLocation();
 
   const toggleMobileMenu = () => {
     setIsMobileMenuOpen(!isMobileMenuOpen);
   };
 
-  const navigationItems = [
+  const topLevelNav = [
     { to: "/inicio", icon: FaHome, label: "Inicio" },
     { to: "/finance", icon: FaChartBar, label: "Finanzas" },
-    { to: "/reports", icon: FaFileAlt, label: "Reportes" },
-    { to: "/news", icon: FaNewspaper, label: "Noticias" },
-    { to: "/manual", icon: FaBook, label: "Manual" },
+    { to: "/stadistics", icon: FaChartBar, label: "Estadísticas" },
+    { to: "/reports", icon: FaFileAlt, label: "Informes" },
   ];
+
+  const resourceLinks = [
+    { to: "/manual", icon: FaBook, label: "Manual" },
+    { to: "/news", icon: FaNewspaper, label: "Noticias" },
+    { to: "/educacion", icon: FaUniversity, label: "Educación" },
+    { to: "/subscriptions", icon: FaCrown, label: "Planes" },
+  ];
+
+  const isResourcesActive = ["/manual", "/news", "/educacion", "/subscriptions"].some(p => location.pathname.startsWith(p));
 
   return (
     <nav className="bg-gray-900/95 backdrop-blur-sm sticky top-0 z-[9999] border-b border-orange-500/20 shadow-lg">
@@ -43,7 +52,7 @@ const Navbar: React.FC<NavbarProps> = ({ isAuthenticated, onLoginClick, onLogout
           {/* Desktop Navigation */}
           <div className="hidden md:block">
             <div className="flex items-center space-x-2">
-              {navigationItems.map((item) => (
+              {topLevelNav.map((item) => (
                 <NavLink
                   key={item.to}
                   to={item.to}
@@ -59,6 +68,37 @@ const Navbar: React.FC<NavbarProps> = ({ isAuthenticated, onLoginClick, onLogout
                   {item.label}
                 </NavLink>
               ))}
+
+              {/* Dropdown Recursos */}
+              <div className="relative group">
+                <button
+                  className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
+                    isResourcesActive ? 'bg-orange-500 text-white shadow-lg' : 'text-gray-300 hover:text-white hover:bg-gray-700'
+                  }`}
+                >
+                  <FaFolderOpen className="text-lg" />
+                  Recursos
+                  <FaChevronDown className="text-xs opacity-80" />
+                </button>
+                <div className="absolute right-0 mt-2 w-56 bg-gray-900/98 backdrop-blur-xl rounded-lg border border-orange-500/20 shadow-2xl p-2 hidden group-hover:block">
+                  {resourceLinks.map((r) => (
+                    <NavLink
+                      key={r.to}
+                      to={r.to}
+                      className={({ isActive }) =>
+                        `flex items-center gap-3 px-3 py-2 rounded-lg text-sm transition-all duration-200 ${
+                          isActive
+                            ? 'bg-orange-500 text-white shadow-lg'
+                            : 'text-gray-300 hover:text-white hover:bg-gray-700'
+                        }`
+                      }
+                    >
+                      <r.icon className="text-base" />
+                      {r.label}
+                    </NavLink>
+                  ))}
+                </div>
+              </div>
             </div>
           </div>
 
@@ -79,13 +119,13 @@ const Navbar: React.FC<NavbarProps> = ({ isAuthenticated, onLoginClick, onLogout
                 </button>
               </div>
             ) : (
-              <button
-                onClick={onLoginClick}
+              <NavLink
+                to="/login"
                 className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-white bg-orange-500 hover:bg-orange-600 rounded-lg transition-all duration-200 shadow-lg"
               >
                 <FaSignInAlt />
                 Iniciar Sesión
-              </button>
+              </NavLink>
             )}
           </div>
 
@@ -111,7 +151,7 @@ const Navbar: React.FC<NavbarProps> = ({ isAuthenticated, onLoginClick, onLogout
             {/* Menu */}
             <div className="md:hidden absolute top-full left-0 right-0 z-[10000]">
               <div className="mx-2 px-2 pt-2 pb-3 space-y-1 bg-gray-900/98 backdrop-blur-xl rounded-lg mt-2 border border-orange-500/20 shadow-2xl">
-              {navigationItems.map((item) => (
+              {topLevelNav.map((item) => (
                 <NavLink
                   key={item.to}
                   to={item.to}
@@ -128,6 +168,41 @@ const Navbar: React.FC<NavbarProps> = ({ isAuthenticated, onLoginClick, onLogout
                   {item.label}
                 </NavLink>
               ))}
+
+              {/* Sección Recursos (colapsable) */}
+              <button
+                onClick={() => setIsResourcesMobileOpen((v) => !v)}
+                className={`w-full flex items-center justify-between gap-3 px-3 py-2 rounded-lg text-base font-medium transition-all duration-200 ${
+                  isResourcesActive ? 'bg-orange-500 text-white shadow-lg' : 'text-gray-300 hover:text-white hover:bg-gray-700'
+                }`}
+              >
+                <span className="inline-flex items-center gap-3">
+                  <FaFolderOpen className="text-lg" />
+                  Recursos
+                </span>
+                <FaChevronDown className={`text-sm transition-transform ${isResourcesMobileOpen ? 'rotate-180' : ''}`} />
+              </button>
+              {isResourcesMobileOpen && (
+                <div className="pl-2 space-y-1">
+                  {resourceLinks.map((r) => (
+                    <NavLink
+                      key={r.to}
+                      to={r.to}
+                      onClick={() => { setIsMobileMenuOpen(false); setIsResourcesMobileOpen(false); }}
+                      className={({ isActive }) =>
+                        `flex items-center gap-3 px-3 py-2 rounded-lg text-base transition-all duration-200 ${
+                          isActive
+                            ? 'bg-orange-500 text-white shadow-lg'
+                            : 'text-gray-300 hover:text-white hover:bg-gray-700'
+                        }`
+                      }
+                    >
+                      <r.icon className="text-base" />
+                      {r.label}
+                    </NavLink>
+                  ))}
+                </div>
+              )}
               
               <div className="border-t border-orange-500/20 pt-3 mt-3">
                 {isAuthenticated ? (
@@ -148,16 +223,14 @@ const Navbar: React.FC<NavbarProps> = ({ isAuthenticated, onLoginClick, onLogout
                     </button>
                   </div>
                 ) : (
-                  <button
-                    onClick={() => {
-                      onLoginClick();
-                      setIsMobileMenuOpen(false);
-                    }}
+                  <NavLink
+                    to="/login"
+                    onClick={() => setIsMobileMenuOpen(false)}
                     className="flex items-center gap-3 w-full px-3 py-2 text-base font-medium text-white bg-orange-500 hover:bg-orange-600 rounded-lg transition-all duration-200 shadow-lg"
                   >
                     <FaSignInAlt />
                     Iniciar Sesión
-                  </button>
+                  </NavLink>
                 )}
               </div>
             </div>

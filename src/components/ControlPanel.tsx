@@ -31,32 +31,38 @@ export const ControlPanel: React.FC<ControlPanelProps> = ({ onAddItem }) => {
     precio: '',
     tipoActivo: '',
   });
+  const [submitting, setSubmitting] = useState(false);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (submitting) return;
+    setSubmitting(true);
+    try {
+      const nuevoItem = {
+        nombre: form.nombre,
+        ticker: form.ticker,
+        cantidad: parseFloat(form.cantidad),
+        precio: parseFloat(form.precio),
+        tipoActivo: form.tipoActivo,
+        fechaCompra: new Date().toISOString(),
+      };
 
-    const nuevoItem = {
-      nombre: form.nombre,
-      ticker: form.ticker,
-      cantidad: parseFloat(form.cantidad),
-      precio: parseFloat(form.precio),
-      tipoActivo: form.tipoActivo,
-      fechaCompra: new Date().toISOString(),
-    };
+      await onAddItem(nuevoItem);
 
-    onAddItem(nuevoItem);
-
-    setForm({
-      nombre: '',
-      ticker: '',
-      cantidad: '',
-      precio: '',
-      tipoActivo: '',
-    });
+      setForm({
+        nombre: '',
+        ticker: '',
+        cantidad: '',
+        precio: '',
+        tipoActivo: '',
+      });
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   return (
@@ -73,7 +79,7 @@ export const ControlPanel: React.FC<ControlPanelProps> = ({ onAddItem }) => {
           placeholder="Nombre del activo"
           value={form.nombre}
           onChange={handleChange}
-          className="w-full input input-bordered"
+          className="w-full text-white placeholder-white input input-bordered"
           required
         />
 
@@ -85,7 +91,7 @@ export const ControlPanel: React.FC<ControlPanelProps> = ({ onAddItem }) => {
           placeholder="Cantidad"
           value={form.cantidad}
           onChange={handleChange}
-          className="w-full input input-bordered"
+          className="w-full text-white input input-bordered"
           required
         />
         <input
@@ -94,7 +100,7 @@ export const ControlPanel: React.FC<ControlPanelProps> = ({ onAddItem }) => {
           placeholder="Precio de compra"
           value={form.precio}
           onChange={handleChange}
-          className="w-full input input-bordered"
+          className="w-full text-white placeholder-white input input-bordered"
           required
         />
         {form.tipoActivo === "Acción" && (
@@ -102,7 +108,7 @@ export const ControlPanel: React.FC<ControlPanelProps> = ({ onAddItem }) => {
             name="ticker"
             value={form.ticker}
             onChange={handleChange}
-            className="w-full select select-bordered"
+            className="w-full text-white select select-bordered"
             required
           >
             {TICKERS.map(ticker => (
@@ -116,7 +122,7 @@ export const ControlPanel: React.FC<ControlPanelProps> = ({ onAddItem }) => {
             name="ticker"
             value={form.ticker}
             onChange={handleChange}
-            className="w-full select select-bordered"
+            className="w-full text-white select select-bordered"
             required
           >
             {CRYPTOS.map(crypto => (
@@ -132,7 +138,7 @@ export const ControlPanel: React.FC<ControlPanelProps> = ({ onAddItem }) => {
             placeholder="Ticker o identificador"
             value={form.ticker}
             onChange={handleChange}
-            className="w-full input input-bordered"
+            className="w-full text-white input input-bordered"
             disabled
           />
         )}
@@ -140,7 +146,7 @@ export const ControlPanel: React.FC<ControlPanelProps> = ({ onAddItem }) => {
           name="tipoActivo"
           value={form.tipoActivo}
           onChange={handleChange}
-          className="w-full select select-bordered"
+          className="w-full text-white select select-bordered"
           required
         >
           <option value="">Seleccionar tipo</option>
@@ -148,7 +154,9 @@ export const ControlPanel: React.FC<ControlPanelProps> = ({ onAddItem }) => {
           <option value="Criptomoneda">Criptomoneda</option>
           <option value="Otro">Otro</option>
         </select>
-        <button type="submit" className="btn btn-primary col-span-full">Agregar activo</button>
+        <button type="submit" className="btn btn-primary col-span-full" disabled={submitting}>
+          {submitting ? 'Agregando…' : 'Agregar activo'}
+        </button>
       </form>
     </div>
   );

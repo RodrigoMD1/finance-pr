@@ -1,2 +1,31 @@
 @import "tailwindcss";
 @plugin "daisyui";
+
+/* Fix global de overflow horizontal en layouts estrechos/verticales */
+html, body, #root {
+	width: 100%;
+	max-width: 100%;
+	overflow-x: hidden;
+}
+
+/* Evitar que elementos con sombras/bordes provoquen scroll horizontal */
+* {
+	box-sizing: border-box;
+}
+
+img, svg, canvas, video {
+	max-width: 100%;
+	height: auto;
+	display: block;
+}
+
+table {
+	width: 100%;
+	max-width: 100%;
+	table-layout: auto;
+}
+
+/* Forzar texto blanco cuando hay overrides de tema */
+.force-white {
+	color: #ffffff !important;
+}

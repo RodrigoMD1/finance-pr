@@ -1,4 +1,5 @@
 import React from 'react';
+import { withBase } from '../services/api';
 
 export const AuthDiagnostic: React.FC = () => {
   const checkAuth = () => {
@@ -46,7 +47,7 @@ export const AuthDiagnostic: React.FC = () => {
 
     try {
       console.log('🔄 Testing admin endpoint...');
-      const response = await fetch('https://proyecto-inversiones.onrender.com/api/admin/stats', {
+        const response = await fetch(withBase('/admin/stats'), {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',

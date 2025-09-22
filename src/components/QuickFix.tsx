@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { FaEye, FaEyeSlash, FaCopy } from 'react-icons/fa';
+import { withBase } from '../services/api';
 
 interface TokenData {
   success?: boolean;
@@ -56,7 +57,7 @@ export const QuickFix = () => {
     if (!token) return;
 
     try {
-      const response = await fetch('http://localhost:3000/api/admin/stats', {
+  const response = await fetch(withBase('/admin/stats'), {
         headers: {
           'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json'

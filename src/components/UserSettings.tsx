@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { withBase } from '../services/api';
 
 export function UserSettings() {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -15,7 +16,7 @@ export function UserSettings() {
             const userId = localStorage.getItem("userId");
             const token = localStorage.getItem("token");
             if (!userId || !token) return;
-            const res = await fetch(`https://proyecto-inversiones.onrender.com/api/users/${userId}`, {
+            const res = await fetch(withBase(`/users/${userId}`), {
                 headers: { Authorization: `Bearer ${token}` }
             });
             if (res.ok) {
@@ -34,7 +35,7 @@ export function UserSettings() {
         setMessage("");
         const userId = localStorage.getItem("userId");
         const token = localStorage.getItem("token");
-        const res = await fetch(`https://proyecto-inversiones.onrender.com/api/users/resend-verification/${userId}`, {
+        const res = await fetch(withBase(`/users/resend-verification/${userId}`), {
             method: "POST",
             headers: { Authorization: `Bearer ${token}` }
         });
@@ -49,7 +50,7 @@ export function UserSettings() {
         setMessage("");
         const userId = localStorage.getItem("userId");
         const token = localStorage.getItem("token");
-        const res = await fetch(`https://proyecto-inversiones.onrender.com/api/users/report-config/${userId}`, {
+        const res = await fetch(withBase(`/users/report-config/${userId}`), {
             method: "PATCH",
             headers: {
                 "Content-Type": "application/json",

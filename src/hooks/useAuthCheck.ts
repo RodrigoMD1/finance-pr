@@ -27,10 +27,13 @@ export const useAuthCheck = () => {
     // Verificar cuando la página vuelve a tener foco
     const handleFocus = () => checkAuth();
     window.addEventListener('focus', handleFocus);
+    const handleAuthChanged = () => checkAuth();
+    window.addEventListener('auth-changed', handleAuthChanged as EventListener);
 
     return () => {
       clearInterval(interval);
       window.removeEventListener('focus', handleFocus);
+      window.removeEventListener('auth-changed', handleAuthChanged as EventListener);
     };
   }, []);
 

@@ -3,8 +3,7 @@
 import Inicio from '../components/Inicio';
 import { Footer } from '../components/Footer';
 import Navbar from '../components/Layout/Navbar';
-import { BrowserRouter, Route, Routes } from 'react-router-dom';
-import { useState } from 'react';
+import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom';
 import { Login } from '../components/Login';
 import { Register } from '../components/Register';
 import { Finance } from '../components/Finance';
@@ -14,15 +13,23 @@ import { VerifyEmail } from '../components/VerifyEmail';
 import { Reports } from '../components/Reports';
 import Aprendizaje from '../components/Aprendizaje';
 import { News } from '../components/News';
+import EducacionLayout from '../components/educacion/EducacionLayout';
+import ConceptosBasicos from '../components/educacion/ConceptosBasicos';
+import TiposInversion from '../components/educacion/TiposInversion';
+import Estrategias from '../components/educacion/Estrategias';
+import Psicologia from '../components/educacion/Psicologia';
+import Analisis from '../components/educacion/Analisis';
+import Mercados from '../components/educacion/Mercados';
+import Planificacion from '../components/educacion/Planificacion';
+import Herramientas from '../components/educacion/Herramientas';
 import { UserManual } from '../components/UserManual';
 import { Subscriptions } from '../components/Subscriptions';
 import { PaymentSuccess, PaymentFailure } from '../components/PaymentStatus';
 import { useAuthCheck } from '../hooks/useAuthCheck';
 import { logout } from '../utils/auth';
+import { UserRoleFixer } from '../components/UserRoleFixer';
 
 export const MisRutas = () => {
-    const [showAuth, setShowAuth] = useState(false);
-    const [authView, setAuthView] = useState<'login' | 'register'>('login');
     const { isAuthenticated, isLoading } = useAuthCheck();
 
     // Función para cerrar sesión
@@ -46,52 +53,9 @@ export const MisRutas = () => {
         <BrowserRouter>
            
             <Navbar
-                onLoginClick={() => { setShowAuth(true); setAuthView('login'); }}
                 onLogoutClick={handleLogout}
                 isAuthenticated={isAuthenticated}
             />
-
-            {/* Modal de autenticación */}
-            {showAuth && (
-                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40">
-                    <div className="bg-white p-8 rounded-xl shadow-2xl min-w-[340px] max-w-xs w-full relative">
-                        <button
-                            className="absolute text-xl font-bold text-gray-400 top-2 right-2 hover:text-red-500"
-                            onClick={() => setShowAuth(false)}
-                            aria-label="Cerrar"
-                        >
-                            ×
-                        </button>
-                        {authView === 'login' ? (
-                            <>
-                                <Login onLoginSuccess={() => setShowAuth(false)} />
-                                <div className="mt-4 text-center">
-                                    <span className="text-gray-600">¿No tienes cuenta?</span>
-                                    <button
-                                        className="px-4 py-2 ml-2 font-semibold text-white transition-colors bg-blue-700 rounded-lg shadow hover:bg-blue-800"
-                                        onClick={() => setAuthView('register')}
-                                    >
-                                        Regístrate
-                                    </button>
-                                </div>
-                            </>
-                        ) : (
-                            <>
-                                <Register />
-                                <div className="mt-4 text-center">
-                                    <span className="text-gray-600">¿Ya tienes cuenta?</span>
-                                    <button
-                                        className="px-4 py-2 ml-2 font-semibold text-white transition-colors bg-blue-700 rounded-lg shadow hover:bg-blue-800"
-                                        onClick={() => setAuthView('login')}
-                                    >
-                                        Iniciar sesión
-                                    </button>
-                                </div>
-                            </>
-                        )}
-                    </div>
-                </div>
-            )}
 
             <Routes>
                 <Route path='/' element={<Inicio />} />
@@ -101,13 +65,27 @@ export const MisRutas = () => {
                 <Route path='/settings' element={isAuthenticated ? <UserSettings /> : <Inicio />} />
                 <Route path='/verify-email' element={<VerifyEmail />} />
                 <Route path='/reports' element={isAuthenticated ? <Reports /> : <Inicio />} />
+                <Route path="/login" element={<Login onLoginSuccess={() => { /* navigation handled in component */ }} />} />
+                <Route path="/register" element={<Register />} />
 
                 <Route path="/news" element={<News />} />
                 <Route path="/manual" element={<UserManual />} />
                 <Route path="/subscriptions" element={<Subscriptions />} />
                 <Route path="/aprendizaje" element={<Aprendizaje />} />
+                <Route path="/educacion" element={<EducacionLayout />}>
+                    <Route index element={<Navigate to="conceptos" replace />} />
+                    <Route path="conceptos" element={<ConceptosBasicos />} />
+                    <Route path="tipos" element={<TiposInversion />} />
+                    <Route path="estrategias" element={<Estrategias />} />
+                    <Route path="psicologia" element={<Psicologia />} />
+                    <Route path="analisis" element={<Analisis />} />
+                    <Route path="mercados" element={<Mercados />} />
+                    <Route path="planificacion" element={<Planificacion />} />
+                    <Route path="herramientas" element={<Herramientas />} />
+                </Route>
                 <Route path="/payment/success" element={<PaymentSuccess />} />
                 <Route path="/payment/failure" element={<PaymentFailure />} />
+                <Route path="/fix-roles" element={isAuthenticated ? <UserRoleFixer /> : <Inicio />} />
 
                 <Route
                     path="*"

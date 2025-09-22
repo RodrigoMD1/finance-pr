@@ -1,7 +1,6 @@
 import { SubscriptionPlan, UserSubscription, PaymentRequest, PaymentResponse, SubscriptionUsage } from '../types/Subscription';
 import { SUBSCRIPTION_PLANS, getFreePlan } from '../data/subscriptionPlans';
-
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000/api';
+import { API_BASE_URL } from './api';
 
 class SubscriptionService {
   private getHeaders(): HeadersInit {

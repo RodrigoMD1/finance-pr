@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { withBase } from '../services/api';
 
 export const AdminTokenFixer = () => {
   const [status, setStatus] = useState<string>('');
@@ -10,7 +11,7 @@ export const AdminTokenFixer = () => {
 
     try {
       // Logout y login especial para admin
-      const response = await fetch('http://localhost:3000/api/auth/login', {
+  const response = await fetch(withBase('/auth/login'), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         credentials: 'include', // Incluye cookies en la petición
@@ -39,7 +40,7 @@ export const AdminTokenFixer = () => {
             
             // Probar acceso admin
             setTimeout(async () => {
-              const testResponse = await fetch('http://localhost:3000/api/admin/stats', {
+              const testResponse = await fetch(withBase('/admin/stats'), {
                 credentials: 'include', // Incluye cookies en la petición
                 mode: 'cors', // Modo CORS explícito
                 headers: { 'Authorization': `Bearer ${data.token}` }

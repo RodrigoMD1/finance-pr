@@ -34,7 +34,7 @@ export const AuthDiagnosticPanel = () => {
           jwtPayload,
           tokenExpired: jwtPayload ? jwtPayload.exp < Math.floor(Date.now() / 1000) : 'N/A',
           apiConfig: {
-            baseUrl: import.meta.env.VITE_API_URL || 'https://proyecto-inversiones.onrender.com/api',
+            baseUrl: import.meta.env.VITE_API_URL || '/api',
             currentOrigin: window.location.origin
           }
         });

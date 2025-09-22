@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { localSubscriptionService } from '../services/localSubscriptionService';
+import { realSubscriptionService } from '../services/realSubscriptionService';
 import { SubscriptionUsage } from '../types/Subscription';
 import toast from 'react-hot-toast';
 
@@ -14,7 +14,7 @@ export const useSubscriptionLimits = () => {
   const loadUsage = async () => {
     try {
       setLoading(true);
-      const usageData = await localSubscriptionService.getSubscriptionUsage();
+  const usageData = await realSubscriptionService.getSubscriptionUsage();
       setUsage(usageData);
     } catch (error) {
       console.error('Error loading subscription usage:', error);
@@ -24,7 +24,7 @@ export const useSubscriptionLimits = () => {
   };
 
   const checkAssetLimit = async (): Promise<boolean> => {
-    const canAdd = await localSubscriptionService.canAddAsset();
+  const canAdd = await realSubscriptionService.canAddAsset();
     if (!canAdd && usage) {
       toast.error(
         `Has alcanzado el límite de ${usage.maxAssets === -1 ? 'activos ilimitados' : usage.maxAssets + ' activos'} de tu plan ${usage.plan.name}. Actualiza tu plan para agregar más activos.`,

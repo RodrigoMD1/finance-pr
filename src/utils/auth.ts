@@ -1,22 +1,33 @@
 // Utilidades para manejo de autenticación
+const base64UrlDecode = (str: string): string => {
+  // Reemplazar caracteres de base64url y agregar padding
+  let output = str.replace(/-/g, '+').replace(/_/g, '/');
+  const pad = output.length % 4;
+  if (pad) {
+    output += '='.repeat(4 - pad);
+  }
+  return atob(output);
+};
+
 export const isTokenExpired = (token: string | null): boolean => {
   if (!token) return true;
-  
+
   try {
-    // Decodifica el payload del JWT (sin verificar la firma)
-    const payload = JSON.parse(atob(token.split('.')[1]));
+    const parts = token.split('.');
+    if (parts.length < 2) return true;
+    const payloadJson = base64UrlDecode(parts[1]);
+    const payload = JSON.parse(payloadJson);
     const currentTime = Date.now() / 1000;
-    
-    // Verifica si el token ha expirado
+    if (!payload || typeof payload.exp !== 'number') return true;
     return payload.exp < currentTime;
   } catch {
-    // Si hay error al decodificar, considerar el token como expirado
     return true;
   }
 };
 
 export const logout = () => {
   localStorage.clear();
+  window.dispatchEvent(new Event('auth-changed'));
   window.location.reload();
 };
 
@@ -33,27 +44,38 @@ export const checkTokenAndLogout = (): boolean => {
 
 export const fetchWithAuth = async (url: string, options: RequestInit = {}) => {
   const token = localStorage.getItem('token');
-  
-  // Verificar token antes de hacer la petición
+
   if (isTokenExpired(token)) {
     logout();
     throw new Error('Token expirado');
   }
-  
+
+  const method = (options.method || 'GET').toUpperCase();
+  const hasBody = !!options.body;
+
+  const headers: Record<string, string> = {
+    ...(options.headers as Record<string, string>),
+    'Authorization': `Bearer ${token}`,
+  };
+
+  if (hasBody || ['POST', 'PUT', 'PATCH'].includes(method)) {
+    headers['Content-Type'] = headers['Content-Type'] || 'application/json';
+  }
+
   const response = await fetch(url, {
     ...options,
-    headers: {
-      ...options.headers,
-      'Authorization': `Bearer ${token}`,
-      'Content-Type': 'application/json',
-    },
+    headers
   });
-  
-  // Si la respuesta es 401 (no autorizado), desconectar
+
   if (response.status === 401) {
     logout();
     throw new Error('Sesión expirada');
   }
-  
+
   return response;
+};
+
+// Notificar cambios de autenticación (login/logout)
+export const notifyAuthChanged = () => {
+  window.dispatchEvent(new Event('auth-changed'));
 };

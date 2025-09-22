@@ -18,16 +18,16 @@ export const FinanceTable = ({ items, onDeleteItem, onAddItem }: FinanceTablePro
       </div>
 
       {/* Precio de Bitcoin */}
-      <div className="mb-6 flex justify-start">
+      <div className="flex justify-start mb-6">
         <BitcoinPrice />
       </div>
 
       {/* Tabla responsiva */}
       <div className="overflow-hidden">
         {items.length === 0 ? (
-          <div className="text-center py-16">
-            <FaCoins className="mx-auto text-6xl text-industrial-steel/50 mb-4" />
-            <h3 className="text-xl font-semibold text-industrial-white mb-2">
+          <div className="py-16 text-center">
+            <FaCoins className="mx-auto mb-4 text-6xl text-industrial-steel/50" />
+            <h3 className="mb-2 text-xl font-semibold text-industrial-white">
               No hay activos en tu portafolio
             </h3>
             <p className="text-industrial-steel">
@@ -39,25 +39,25 @@ export const FinanceTable = ({ items, onDeleteItem, onAddItem }: FinanceTablePro
             <table className="w-full">
               <thead>
                 <tr className="border-b border-industrial-copper/20">
-                  <th className="text-left py-4 px-3 text-sm font-semibold text-industrial-white uppercase tracking-wider">
+                  <th className="px-3 py-4 text-sm font-semibold tracking-wider text-left uppercase text-industrial-white">
                     Activo
                   </th>
-                  <th className="text-left py-4 px-3 text-sm font-semibold text-industrial-white uppercase tracking-wider">
+                  <th className="px-3 py-4 text-sm font-semibold tracking-wider text-left uppercase text-industrial-white">
                     Cantidad
                   </th>
-                  <th className="text-left py-4 px-3 text-sm font-semibold text-industrial-white uppercase tracking-wider">
+                  <th className="px-3 py-4 text-sm font-semibold tracking-wider text-left uppercase text-industrial-white">
                     Precio de Compra
                   </th>
-                  <th className="text-left py-4 px-3 text-sm font-semibold text-industrial-white uppercase tracking-wider">
+                  <th className="px-3 py-4 text-sm font-semibold tracking-wider text-left uppercase text-industrial-white">
                     Fecha de Compra
                   </th>
-                  <th className="text-left py-4 px-3 text-sm font-semibold text-industrial-white uppercase tracking-wider">
+                  <th className="px-3 py-4 text-sm font-semibold tracking-wider text-left uppercase text-industrial-white">
                     Tipo
                   </th>
-                  <th className="text-left py-4 px-3 text-sm font-semibold text-industrial-white uppercase tracking-wider">
+                  <th className="px-3 py-4 text-sm font-semibold tracking-wider text-left uppercase text-industrial-white">
                     Total
                   </th>
-                  <th className="text-center py-4 px-3 text-sm font-semibold text-industrial-white uppercase tracking-wider">
+                  <th className="px-3 py-4 text-sm font-semibold tracking-wider text-center text-white uppercase">
                     Acciones
                   </th>
                 </tr>
@@ -70,10 +70,10 @@ export const FinanceTable = ({ items, onDeleteItem, onAddItem }: FinanceTablePro
                       index % 2 === 0 ? 'bg-industrial-iron/20' : 'bg-transparent'
                     }`}
                   >
-                    <td className="py-4 px-3">
+                    <td className="px-3 py-4">
                       <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 bg-gradient-to-br from-industrial-copper to-industrial-copper/70 rounded-lg flex items-center justify-center">
-                          <span className="text-white font-bold text-sm">
+                        <div className="flex items-center justify-center w-10 h-10 rounded-lg bg-gradient-to-br from-industrial-copper to-industrial-copper/70">
+                          <span className="text-sm font-bold text-white">
                             {item.ticker ? item.ticker.substring(0, 2).toUpperCase() : item.nombre.substring(0, 2).toUpperCase()}
                           </span>
                         </div>
@@ -89,21 +89,21 @@ export const FinanceTable = ({ items, onDeleteItem, onAddItem }: FinanceTablePro
                         </div>
                       </div>
                     </td>
-                    <td className="py-4 px-3 text-industrial-white font-medium">
+                    <td className="px-3 py-4 font-medium text-industrial-white">
                       {Number(item.cantidad).toLocaleString('es-AR')}
                     </td>
-                    <td className="py-4 px-3">
-                      <div className="flex items-center gap-1 text-industrial-white font-medium">
-                        <FaDollarSign className="text-industrial-copper text-sm" />
+                    <td className="px-3 py-4">
+                      <div className="flex items-center gap-1 font-medium text-industrial-white">
+                        <FaDollarSign className="text-sm text-industrial-copper" />
                         {Number(item.precio).toLocaleString('es-AR', {
                           minimumFractionDigits: 2,
                           maximumFractionDigits: 2,
                         })}
                       </div>
                     </td>
-                    <td className="py-4 px-3">
+                    <td className="px-3 py-4">
                       <div className="flex items-center gap-2 text-industrial-steel">
-                        <FaCalendar className="text-industrial-copper text-sm" />
+                        <FaCalendar className="text-sm text-industrial-copper" />
                         <span className="text-sm">
                           {new Date(item.fechaCompra).toLocaleString('es-AR', {
                             year: 'numeric',
@@ -115,15 +115,15 @@ export const FinanceTable = ({ items, onDeleteItem, onAddItem }: FinanceTablePro
                         </span>
                       </div>
                     </td>
-                    <td className="py-4 px-3">
+                    <td className="px-3 py-4">
                       <div className="flex items-center gap-2">
-                        <FaTag className="text-industrial-copper text-sm" />
-                        <span className="px-2 py-1 bg-industrial-copper/20 text-industrial-white text-xs font-medium rounded-full">
+                        <FaTag className="text-sm text-industrial-copper" />
+                        <span className="px-2 py-1 text-xs font-medium rounded-full bg-industrial-copper/20 text-industrial-white">
                           {item.tipoActivo}
                         </span>
                       </div>
                     </td>
-                    <td className="py-4 px-3">
+                    <td className="px-3 py-4">
                       <div className="text-lg font-bold text-green-400">
                         ${(item.cantidad * item.precio).toLocaleString('es-AR', {
                           minimumFractionDigits: 2,
@@ -131,10 +131,10 @@ export const FinanceTable = ({ items, onDeleteItem, onAddItem }: FinanceTablePro
                         })}
                       </div>
                     </td>
-                    <td className="py-4 px-3 text-center">
+                    <td className="px-3 py-4 text-center">
                       <button
                         onClick={() => onDeleteItem(item.id)}
-                        className="inline-flex items-center gap-1 px-3 py-2 text-sm font-medium text-white bg-red-600 hover:bg-red-700 rounded-lg transition-colors duration-200 shadow-lg hover:shadow-xl"
+                        className="inline-flex items-center gap-1 px-3 py-2 text-sm font-medium text-white transition-colors duration-200 bg-red-600 rounded-lg shadow-lg hover:bg-red-700 hover:shadow-xl"
                       >
                         <FaTrash className="text-xs" />
                         Eliminar

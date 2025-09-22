@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { FaCheck, FaCrown, FaRocket, FaChartLine, FaGem, FaSpinner, FaCreditCard, FaTimes, FaLock, FaSignInAlt } from 'react-icons/fa';
-import { localSubscriptionService } from '../services/localSubscriptionService';
+import { realSubscriptionService } from '../services/realSubscriptionService';
 import { SubscriptionPlan, UserSubscription, SubscriptionUsage } from '../types/Subscription';
 import { Link } from 'react-router-dom';
 import toast from 'react-hot-toast';
@@ -28,9 +28,9 @@ export const Subscriptions: React.FC = () => {
     try {
       setLoading(true);
       const [availablePlans, subscription, usageData] = await Promise.all([
-        localSubscriptionService.getAvailablePlans(),
-        localSubscriptionService.getCurrentSubscription(),
-        localSubscriptionService.getSubscriptionUsage()
+  realSubscriptionService.getAvailablePlans(),
+  realSubscriptionService.getCurrentSubscription(),
+  realSubscriptionService.getSubscriptionUsage()
       ]);
 
       setPlans(availablePlans);
@@ -58,7 +58,7 @@ export const Subscriptions: React.FC = () => {
     try {
       setProcessingPayment(plan.id);
       
-      const paymentResponse = await localSubscriptionService.createPayment(plan.id);
+  const paymentResponse = await realSubscriptionService.createPayment(plan.id);
       
       if (paymentResponse.success) {
         toast.success(paymentResponse.message);
@@ -84,7 +84,7 @@ export const Subscriptions: React.FC = () => {
     if (!confirmed) return;
 
     try {
-      const success = await localSubscriptionService.cancelSubscription();
+  const success = await realSubscriptionService.cancelSubscription();
       if (success) {
         toast.success('Suscripción cancelada exitosamente');
         await loadSubscriptionData();
@@ -174,20 +174,7 @@ export const Subscriptions: React.FC = () => {
           Elige el plan perfecto para tus necesidades de inversión
         </p>
         
-        {/* Botón de desarrollo para limpiar datos */}
-        {import.meta.env.DEV && (
-          <div className="mt-4">
-            <button 
-              className="btn btn-sm btn-outline btn-warning"
-              onClick={() => {
-                localSubscriptionService.clearAllData();
-                loadSubscriptionData();
-              }}
-            >
-              🧹 Limpiar Datos (Dev)
-            </button>
-          </div>
-        )}
+        {/* Botón de desarrollo eliminado en modo real */}
       </div>
 
       {/* Current Subscription Status */}

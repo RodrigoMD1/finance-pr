@@ -2,10 +2,11 @@
 // Este reemplazará al localSubscriptionService cuando esté listo
 
 import { SubscriptionPlan, UserSubscription, SubscriptionUsage, PaymentHistory } from '../types/Subscription';
-import { SUBSCRIPTION_PLANS } from '../data/subscriptionPlans';
+import { SUBSCRIPTION_PLANS, getFreePlan, getPlanById } from '../data/subscriptionPlans';
+import { API_BASE_URL } from './api';
 import toast from 'react-hot-toast';
 
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000/api';
+// API_BASE_URL centralizado en services/api.ts
 
 class RealSubscriptionService {
   private getHeaders(): HeadersInit {
@@ -29,14 +30,69 @@ class RealSubscriptionService {
       });
 
       if (!response.ok) {
+        if (response.status === 404) {
+          // Usuario sin suscripción: free
+          const free = getFreePlan();
+          const now = new Date();
+          return {
+            id: 'free-default',
+            userId: localStorage.getItem('userId') || '',
+            planId: free.id,
+            plan: free,
+            status: 'active',
+            startDate: now,
+            endDate: new Date(now.getFullYear(), now.getMonth() + 1, now.getDate()),
+            autoRenew: false,
+            createdAt: now,
+            updatedAt: now
+          } as UserSubscription;
+        }
         throw new Error('Error al obtener suscripción');
       }
 
-      return await response.json();
+      const raw = await response.json();
+      // Backend puede devolver { id, type, status, startDate, endDate, ... }
+      const backendType: string = (raw.type || raw.planId || '').toString().toLowerCase();
+      const mapType = (t: string): string => {
+        if (t === 'basic') return 'basic';
+        if (t === 'pro') return 'pro';
+        if (t === 'premium' || t === 'enterprise') return 'premium';
+        if (t === 'free') return 'free';
+        return 'free';
+      };
+      const planId = mapType(backendType);
+      const plan = getPlanById(planId) || getFreePlan();
+
+      return {
+        id: raw.id || `sub_${Date.now()}`,
+        userId: raw.userId || localStorage.getItem('userId') || '',
+        planId: plan.id,
+        plan,
+  status: (typeof raw.status === 'string' ? raw.status : 'active'),
+        startDate: raw.startDate ? new Date(raw.startDate) : new Date(),
+        endDate: raw.endDate ? new Date(raw.endDate) : new Date(new Date().getFullYear(), new Date().getMonth() + 1, new Date().getDate()),
+        autoRenew: raw.autoRenew ?? true,
+        createdAt: raw.createdAt ? new Date(raw.createdAt) : new Date(),
+        updatedAt: raw.updatedAt ? new Date(raw.updatedAt) : new Date()
+      } as UserSubscription;
     } catch (error) {
       console.error('Error fetching subscription:', error);
       toast.error('Error al cargar suscripción');
-      return null;
+      // fallback a free
+      const free = getFreePlan();
+      const now = new Date();
+      return {
+        id: 'free-default',
+        userId: localStorage.getItem('userId') || '',
+        planId: free.id,
+        plan: free,
+        status: 'active',
+        startDate: now,
+        endDate: new Date(now.getFullYear(), now.getMonth() + 1, now.getDate()),
+        autoRenew: false,
+        createdAt: now,
+        updatedAt: now
+      } as UserSubscription;
     }
   }
 
@@ -47,16 +103,66 @@ class RealSubscriptionService {
         headers: this.getHeaders()
       });
 
+      // Conseguir el plan actual para mapear límites/nombre
+      const current = await this.getCurrentSubscription();
+      const plan = current?.plan || getFreePlan();
+
       if (!response.ok) {
-        throw new Error('Error al obtener uso de suscripción');
+        // Mapear a partir del plan si la API no responde
+        const currentAssets = await this.estimateCurrentAssets();
+        const canAddAsset = plan.maxAssets === -1 || currentAssets < plan.maxAssets;
+        return {
+          userId: localStorage.getItem('userId') || '',
+          currentAssets,
+          maxAssets: plan.maxAssets,
+          plan,
+          canAddAsset,
+          assetsRemaining: plan.maxAssets === -1 ? 999 : Math.max(0, plan.maxAssets - currentAssets)
+        } as SubscriptionUsage;
       }
 
-      return await response.json();
+      const raw = await response.json();
+      // La API puede devolver { currentUsage, limit, ... } o { currentAssets, maxAssets }
+      const currentAssets: number = raw.currentAssets ?? raw.currentUsage ?? 0;
+      const maxAssetsFromApi: number | undefined = raw.maxAssets ?? raw.limit;
+      const maxAssets = typeof maxAssetsFromApi === 'number' ? maxAssetsFromApi : plan.maxAssets;
+      const canAddAsset = maxAssets === -1 || currentAssets < maxAssets;
+      return {
+        userId: localStorage.getItem('userId') || '',
+        currentAssets,
+        maxAssets,
+        plan,
+        canAddAsset,
+        assetsRemaining: maxAssets === -1 ? 999 : Math.max(0, maxAssets - currentAssets)
+      } as SubscriptionUsage;
     } catch (error) {
       console.error('Error fetching subscription usage:', error);
-      toast.error('Error al cargar límites');
-      throw error;
+      // Fallback a plan gratuito + conteo estimado
+      const plan = getFreePlan();
+      const currentAssets = await this.estimateCurrentAssets();
+      return {
+        userId: localStorage.getItem('userId') || '',
+        currentAssets,
+        maxAssets: plan.maxAssets,
+        plan,
+        canAddAsset: plan.maxAssets === -1 || currentAssets < plan.maxAssets,
+        assetsRemaining: plan.maxAssets === -1 ? 999 : Math.max(0, plan.maxAssets - currentAssets)
+      } as SubscriptionUsage;
     }
+  }
+
+  private async estimateCurrentAssets(): Promise<number> {
+    try {
+      // Intentar llamar a /portfolio y contar
+      const res = await fetch(`${API_BASE_URL}/portfolio`, { headers: this.getHeaders() });
+      if (res.ok) {
+        const data = await res.json();
+        return Array.isArray(data) ? data.length : (Array.isArray(data?.items) ? data.items.length : 0);
+      }
+    } catch {
+      // ignore
+    }
+    return 0;
   }
 
   // Verificar si el usuario puede agregar un nuevo activo

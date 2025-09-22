@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { withBase } from '../services/api';
 
 export function VerifyEmail() {
   const [message, setMessage] = useState("Verificando...");
@@ -10,7 +11,7 @@ export function VerifyEmail() {
       setMessage("Token inválido.");
       return;
     }
-    fetch(`https://proyecto-inversiones.onrender.com/api/users/verify-email?token=${token}`)
+  fetch(withBase(`/users/verify-email?token=${token}`))
       .then(res => res.json())
       .then(data => {
         setMessage(data.message || "Verificación completada.");

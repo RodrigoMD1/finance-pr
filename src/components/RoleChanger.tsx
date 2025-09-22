@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { withBase } from '../services/api';
 
 export const RoleChanger: React.FC = () => {
   const [loading, setLoading] = useState(false);
@@ -19,7 +20,7 @@ export const RoleChanger: React.FC = () => {
       }
 
       // Intentar usar el endpoint de admin para cambiar roles (self-promotion para desarrollo)
-      const response = await fetch('https://proyecto-inversiones.onrender.com/api/admin/users/' + userId + '/roles', {
+  const response = await fetch(withBase('/admin/users/' + userId + '/roles'), {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',

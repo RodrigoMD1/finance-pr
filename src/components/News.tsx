@@ -54,7 +54,7 @@ export const News = () => {
 
     // Código original comentado para debug
     /*
-    fetch("https://proyecto-inversiones.onrender.com/api/news")
+  fetch(withBase('/news'), { headers: { Authorization: `Bearer ${localStorage.getItem('token')}` } })
       .then(res => {
         console.log('Response status:', res.status);
         return res.json();
