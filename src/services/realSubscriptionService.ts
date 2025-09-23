@@ -17,6 +17,42 @@ class RealSubscriptionService {
     };
   }
 
+  // Obtener/crear preapproval_plan_id desde el backend
+  async getPreapprovalPlanId(): Promise<string> {
+    const response = await fetch(`${API_BASE_URL}/payments/preapproval-plan/id`, {
+      headers: this.getHeaders(),
+    });
+    if (!response.ok) {
+      throw new Error('No se pudo obtener el preapproval_plan_id');
+    }
+    const data = await response.json();
+    return data.id || data.preapproval_plan_id || data.preapprovalPlanId;
+  }
+
+  // Autorizar suscripción recurrente con card_token_id
+  async authorizePreapproval(preapprovalPlanId: string, cardTokenId: string): Promise<{ status: string }>
+  {
+    const response = await fetch(`${API_BASE_URL}/payments/preapproval/authorize`, {
+      method: 'POST',
+      headers: this.getHeaders(),
+      body: JSON.stringify({ preapproval_plan_id: preapprovalPlanId, card_token_id: cardTokenId })
+    });
+    if (!response.ok) {
+      const text = await response.text().catch(() => '');
+      throw new Error(text || 'No se pudo autorizar la suscripción');
+    }
+    return response.json();
+  }
+
+  // Cancelar suscripción recurrente (preapproval)
+  async cancelPreapproval(): Promise<boolean> {
+    const response = await fetch(`${API_BASE_URL}/payments/preapproval/cancel`, {
+      method: 'POST',
+      headers: this.getHeaders(),
+    });
+    return response.ok;
+  }
+
   // Obtener todos los planes disponibles
   getAvailablePlans(): SubscriptionPlan[] {
     return SUBSCRIPTION_PLANS;
@@ -187,6 +223,10 @@ class RealSubscriptionService {
         throw new Error('Usuario no autenticado');
       }
 
+      const successUrl = `${window.location.origin}/payment/success`;
+      const failureUrl = `${window.location.origin}/payment/failure`;
+      const pendingUrl = `${window.location.origin}/payment/failure?status=pending`;
+
       const response = await fetch(`${API_BASE_URL}/payments/create`, {
         method: 'POST',
         headers: this.getHeaders(),
@@ -195,7 +235,10 @@ class RealSubscriptionService {
           userId,
           email: userEmail,
           firstName: userName?.split(' ')[0] || 'Usuario',
-          lastName: userName?.split(' ').slice(1).join(' ') || ''
+          lastName: userName?.split(' ').slice(1).join(' ') || '',
+          successUrl,
+          failureUrl,
+          pendingUrl
         })
       });
 
@@ -214,7 +257,8 @@ class RealSubscriptionService {
 
       // Para planes pagos, redirigir a MercadoPago
       if (result.init_point) {
-        window.open(result.init_point, '_blank');
+        // Redirigir en la misma pestaña para asegurar retorno a /payment/success|failure
+        window.location.href = result.init_point;
         return {
           success: true,
           message: 'Redirigiendo a MercadoPago...',

@@ -10,6 +10,7 @@ interface NavbarProps {
 const Navbar: React.FC<NavbarProps> = ({ isAuthenticated, onLogoutClick }) => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isResourcesMobileOpen, setIsResourcesMobileOpen] = useState(false);
+  const [isResourcesOpen, setIsResourcesOpen] = useState(false);
   const userName = localStorage.getItem('userName');
   const location = useLocation();
 
@@ -69,18 +70,30 @@ const Navbar: React.FC<NavbarProps> = ({ isAuthenticated, onLogoutClick }) => {
                 </NavLink>
               ))}
 
-              {/* Dropdown Recursos */}
-              <div className="relative group">
+              {/* Dropdown Recursos (desktop) */}
+              <div
+                className="relative"
+                onMouseEnter={() => setIsResourcesOpen(true)}
+                onMouseLeave={() => setIsResourcesOpen(false)}
+              >
                 <button
+                  onClick={() => setIsResourcesOpen((v) => !v)}
                   className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
                     isResourcesActive ? 'bg-orange-500 text-white shadow-lg' : 'text-gray-300 hover:text-white hover:bg-gray-700'
                   }`}
+                  aria-haspopup="menu"
+                  aria-expanded={isResourcesOpen}
                 >
                   <FaFolderOpen className="text-lg" />
                   Recursos
-                  <FaChevronDown className="text-xs opacity-80" />
+                  <FaChevronDown className={`text-xs opacity-80 transition-transform ${isResourcesOpen ? 'rotate-180' : ''}`} />
                 </button>
-                <div className="absolute right-0 mt-2 w-56 bg-gray-900/98 backdrop-blur-xl rounded-lg border border-orange-500/20 shadow-2xl p-2 hidden group-hover:block">
+                <div
+                  className={`absolute right-0 top-full w-56 bg-gray-900/98 backdrop-blur-xl rounded-lg border border-orange-500/20 shadow-2xl p-2 ${
+                    isResourcesOpen ? 'block' : 'hidden'
+                  }`}
+                  role="menu"
+                >
                   {resourceLinks.map((r) => (
                     <NavLink
                       key={r.to}

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { 
   FaBook, 
   FaUserPlus, 
@@ -37,7 +37,7 @@ export const UserManual = () => {
       case 'inicio':
         return (
           <div className="space-y-6">
-            <div className="p-6 rounded-lg bg-gradient-to-r from-industrial-copper/20 to-industrial-iron/20 border border-industrial-copper/30">
+            <div className="p-6 border rounded-lg bg-gradient-to-r from-industrial-copper/20 to-industrial-iron/20 border-industrial-copper/30">
               <h2 className="flex items-center gap-3 mb-4 text-3xl font-bold text-industrial-white">
                 <FaBook className="text-4xl text-industrial-copper" />
                 Bienvenido a FinancePR
@@ -490,7 +490,7 @@ export const UserManual = () => {
         <div className="flex flex-col gap-6 lg:flex-row">
           {/* Sidebar Navigation */}
           <div className="lg:w-1/4">
-            <div className="sticky p-6 rounded-lg top-4 glass-effect border border-industrial-copper/20">
+            <div className="sticky p-6 border rounded-lg top-4 glass-effect border-industrial-copper/20">
               <h3 className="mb-4 text-lg font-semibold text-industrial-white">Índice de Contenidos</h3>
               <nav className="space-y-2">
                 {sections.map((section) => {
@@ -519,18 +519,18 @@ export const UserManual = () => {
 
           {/* Main Content */}
           <div className="lg:w-3/4">
-            <div className="p-8 rounded-lg glass-effect border border-industrial-copper/20">
+            <div className="p-8 border rounded-lg glass-effect border-industrial-copper/20">
               {renderSection()}
             </div>
           </div>
         </div>
 
         {/* Footer */}
-        <div className="p-6 mt-8 text-center rounded-lg glass-effect border border-industrial-copper/20">
+        <div className="p-6 mt-8 text-center border rounded-lg glass-effect border-industrial-copper/20">
           <p className="text-sm text-industrial-steel">
             ¿Necesitas ayuda adicional? Este manual se actualiza constantemente. 
             <br />
-            <span className="text-industrial-copper font-medium">Versión 1.0 - Última actualización: Septiembre 2025</span>
+            <span className="font-medium text-industrial-copper">Versión 1.0 - Última actualización: Septiembre 2025</span>
           </p>
         </div>
       </div>

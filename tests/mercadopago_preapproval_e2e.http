@@ -1,0 +1,49 @@
+### Mercado Pago - Preapproval E2E (Backend)
+# Requiere extensión VS Code: REST Client (humao.rest-client)
+# Rellena las variables y ejecuta cada request con "Send Request" sobre la línea.
+
+@baseUrl = https://proyecto-inversiones.onrender.com/api
+@jwt = PASTE_YOUR_JWT_HERE
+@preapprovalPlanId = PASTE_PLAN_ID_OR_LEAVE_EMPTY
+@cardTokenId = PASTE_CARD_TOKEN_ID
+
+### (Opcional) Crear Preapproval Plan directamente en Mercado Pago (usar Access Token TEST del mismo vendedor)
+# POST https://api.mercadopago.com/preapproval_plan
+# Authorization: Bearer TEST-YOUR-ACCESS-TOKEN
+# Content-Type: application/json
+#
+# {
+#   "reason": "Plan Premium mensual",
+#   "auto_recurring": {
+#     "frequency": 1,
+#     "frequency_type": "months",
+#     "transaction_amount": 9990,
+#     "currency_id": "ARS"
+#   },
+#   "back_url": "https://proyecto-inversiones.onrender.com/api/payments/preapproval/callback"
+# }
+#
+# Respuesta devuelve: { id: "<MP_PREAPPROVAL_PLAN_ID>", ... }
+# Configura este id en Render como variable MP_PREAPPROVAL_PLAN_ID.
+
+### 1) Obtener/crear Preapproval Plan ID desde tu backend
+GET {{baseUrl}}/payments/preapproval-plan/id
+Authorization: Bearer {{jwt}}
+
+### 2) Autorizar suscripción con card_token_id
+POST {{baseUrl}}/payments/preapproval/authorize
+Authorization: Bearer {{jwt}}
+Content-Type: application/json
+
+{
+  "preapproval_plan_id": "{{preapprovalPlanId}}",
+  "card_token_id": "{{cardTokenId}}"
+}
+
+### 3) Consultar suscripción actual
+GET {{baseUrl}}/subscriptions/current
+Authorization: Bearer {{jwt}}
+
+### 4) Cancelar suscripción (preapproval)
+POST {{baseUrl}}/payments/preapproval/cancel
+Authorization: Bearer {{jwt}}

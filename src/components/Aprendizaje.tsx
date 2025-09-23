@@ -1,4 +1,4 @@
-import React from 'react';
+
 import financeImg2 from '../assets/img/finance55.jpg';
 import finanzasImg from '../assets/img/finance235.jpg';
 

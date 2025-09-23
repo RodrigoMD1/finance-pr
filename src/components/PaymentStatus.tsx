@@ -1,7 +1,28 @@
-import React from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { FaCreditCard, FaCheck, FaTimes } from 'react-icons/fa';
+import { subscriptionService } from '../services/subscriptionService';
 
 export const PaymentSuccess: React.FC = () => {
+  const params = useMemo(() => new URLSearchParams(window.location.search), []);
+  const paymentId = params.get('payment_id') || params.get('paymentId') || '';
+  const [verifying, setVerifying] = useState(!!paymentId);
+  const [statusText, setStatusText] = useState<string>('Activo');
+
+  useEffect(() => {
+    const verify = async () => {
+      if (!paymentId) return;
+      try {
+        const res = await subscriptionService.checkPaymentStatus(paymentId);
+        setStatusText(res.status || 'Activo');
+      } catch {
+        // mantener mensaje por defecto
+      } finally {
+        setVerifying(false);
+      }
+    };
+    verify();
+  }, [paymentId]);
+
   return (
     <div className="container mx-auto px-4 py-16">
       <div className="max-w-md mx-auto text-center">
@@ -11,7 +32,7 @@ export const PaymentSuccess: React.FC = () => {
           </div>
           <h1 className="text-3xl font-bold text-green-600 mb-2">¡Pago Exitoso!</h1>
           <p className="text-gray-600">
-            Tu suscripción ha sido activada correctamente.
+            {verifying ? 'Verificando estado de tu suscripción...' : 'Tu suscripción ha sido activada correctamente.'}
           </p>
         </div>
         
@@ -32,7 +53,7 @@ export const PaymentSuccess: React.FC = () => {
             </div>
             <div className="flex justify-between">
               <span className="text-gray-600">Estado:</span>
-              <span className="text-green-600 font-medium">Activo</span>
+              <span className="text-green-600 font-medium">{statusText}</span>
             </div>
           </div>
         </div>
@@ -58,6 +79,15 @@ export const PaymentSuccess: React.FC = () => {
 };
 
 export const PaymentFailure: React.FC = () => {
+  const params = useMemo(() => new URLSearchParams(window.location.search), []);
+  const status = params.get('collection_status') || params.get('status') || 'rejected';
+  const reasonMap: Record<string, string> = {
+    rejected: 'El pago fue rechazado por el medio de pago.',
+    cancelled: 'Cancelaste el pago durante el proceso.',
+    pending: 'El pago quedó pendiente de acreditación.'
+  };
+  const reason = reasonMap[status] || 'Hubo un problema al procesar tu pago.';
+
   return (
     <div className="container mx-auto px-4 py-16">
       <div className="max-w-md mx-auto text-center">
@@ -65,9 +95,9 @@ export const PaymentFailure: React.FC = () => {
           <div className="w-20 h-20 mx-auto mb-4 bg-red-100 rounded-full flex items-center justify-center">
             <FaTimes className="text-3xl text-red-600" />
           </div>
-          <h1 className="text-3xl font-bold text-red-600 mb-2">Pago Fallido</h1>
+          <h1 className="text-3xl font-bold text-red-600 mb-2">Pago {status === 'pending' ? 'Pendiente' : 'Fallido'}</h1>
           <p className="text-gray-600">
-            Hubo un problema al procesar tu pago. Por favor, inténtalo de nuevo.
+            {reason} Por favor, inténtalo de nuevo.
           </p>
         </div>
         
