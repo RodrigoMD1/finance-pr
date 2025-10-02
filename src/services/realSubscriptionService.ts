@@ -61,11 +61,35 @@ class RealSubscriptionService {
   // Obtener suscripción actual del usuario
   async getCurrentSubscription(): Promise<UserSubscription | null> {
     try {
+      const token = localStorage.getItem('token');
+      if (!token) {
+        // Sin token, retornar plan free sin hacer petición
+        const free = getFreePlan();
+        const now = new Date();
+        return {
+          id: 'free-default',
+          userId: localStorage.getItem('userId') || '',
+          planId: free.id,
+          plan: free,
+          status: 'active',
+          startDate: now,
+          endDate: new Date(now.getFullYear(), now.getMonth() + 1, now.getDate()),
+          autoRenew: false,
+          createdAt: now,
+          updatedAt: now
+        } as UserSubscription;
+      }
+
       const response = await fetch(`${API_BASE_URL}/subscriptions/current`, {
         headers: this.getHeaders()
       });
 
       if (!response.ok) {
+        if (response.status === 401) {
+          // No autenticado, no mostrar error
+          console.warn('Usuario no autenticado');
+          return null;
+        }
         if (response.status === 404) {
           // Usuario sin suscripción: free
           const free = getFreePlan();
@@ -135,6 +159,20 @@ class RealSubscriptionService {
   // Obtener uso actual de la suscripción
   async getSubscriptionUsage(): Promise<SubscriptionUsage> {
     try {
+      const token = localStorage.getItem('token');
+      if (!token) {
+        // Sin token, retornar uso free sin hacer petición
+        const plan = getFreePlan();
+        return {
+          userId: localStorage.getItem('userId') || '',
+          currentAssets: 0,
+          maxAssets: plan.maxAssets,
+          plan,
+          canAddAsset: true,
+          assetsRemaining: plan.maxAssets === -1 ? 999 : plan.maxAssets
+        } as SubscriptionUsage;
+      }
+
       const response = await fetch(`${API_BASE_URL}/subscriptions/usage`, {
         headers: this.getHeaders()
       });
@@ -144,6 +182,19 @@ class RealSubscriptionService {
       const plan = current?.plan || getFreePlan();
 
       if (!response.ok) {
+        if (response.status === 401) {
+          // No autenticado, no hacer más peticiones
+          console.warn('Usuario no autenticado');
+          return {
+            userId: localStorage.getItem('userId') || '',
+            currentAssets: 0,
+            maxAssets: plan.maxAssets,
+            plan,
+            canAddAsset: true,
+            assetsRemaining: plan.maxAssets === -1 ? 999 : plan.maxAssets
+          } as SubscriptionUsage;
+        }
+        
         // Mapear a partir del plan si la API no responde
         const currentAssets = await this.estimateCurrentAssets();
         const canAddAsset = plan.maxAssets === -1 || currentAssets < plan.maxAssets;

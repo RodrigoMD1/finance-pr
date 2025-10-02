@@ -6,12 +6,14 @@ import toast from 'react-hot-toast';
 export const useSubscriptionLimits = () => {
   const [usage, setUsage] = useState<SubscriptionUsage | null>(null);
   const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    loadUsage();
-  }, []);
+  const isAuthenticated = !!localStorage.getItem('token');
 
   const loadUsage = async () => {
+    if (!isAuthenticated) {
+      setLoading(false);
+      return;
+    }
+    
     try {
       setLoading(true);
   const usageData = await realSubscriptionService.getSubscriptionUsage();
@@ -23,7 +25,18 @@ export const useSubscriptionLimits = () => {
     }
   };
 
+  useEffect(() => {
+    if (!isAuthenticated) {
+      setLoading(false);
+      return;
+    }
+    loadUsage();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isAuthenticated]);
+
   const checkAssetLimit = async (): Promise<boolean> => {
+    if (!isAuthenticated) return false;
+    
   const canAdd = await realSubscriptionService.canAddAsset();
     if (!canAdd && usage) {
       toast.error(
@@ -35,6 +48,7 @@ export const useSubscriptionLimits = () => {
   };
 
   const refreshUsage = () => {
+    if (!isAuthenticated) return;
     loadUsage();
   };
 

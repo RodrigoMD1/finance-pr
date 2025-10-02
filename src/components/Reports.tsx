@@ -1,5 +1,6 @@
-import { FaFileAlt, FaDownload, FaChartPie, FaChartLine, FaCalendarAlt, FaSpinner, FaCheckCircle, FaClock } from 'react-icons/fa';
+import { FaFileAlt, FaDownload, FaChartPie, FaChartLine, FaCalendarAlt, FaSpinner, FaCheckCircle, FaClock, FaLock, FaSignInAlt } from 'react-icons/fa';
 import { useMemo, useState } from 'react';
+import { Link } from 'react-router-dom';
 import toast from 'react-hot-toast';
 import { reportsService } from '../services/reportsService';
 import { ResponsiveContainer, LineChart, Line, CartesianGrid, XAxis, YAxis, Tooltip } from 'recharts';
@@ -46,6 +47,9 @@ function DownloadReportButton({ type, period, onDownloaded }: { type: ReportType
 }
 
 export function Reports() {
+    // Verificar autenticación primero
+    const isAuthenticated = !!localStorage.getItem('token');
+    
     const [type, setType] = useState<ReportType>('portfolio');
     const [period, setPeriod] = useState<ReportPeriod>('monthly');
     const [recent, setRecent] = useState<Array<{ type: ReportType; period: ReportPeriod; date: string }>>([]);
@@ -68,7 +72,7 @@ export function Reports() {
         }
     ];
 
-        const previewData = useMemo(() => {
+    const previewData = useMemo(() => {
             const base = [
                 { date: '2025-01', total: 100 },
                 { date: '2025-02', total: 105 },
@@ -85,6 +89,40 @@ export function Reports() {
         const addRecent = (info: { type: ReportType; period: ReportPeriod; date: string }) => {
             setRecent(prev => [info, ...prev].slice(0, 5));
         };
+
+    // Si no está autenticado, mostrar mensaje de login
+    if (!isAuthenticated) {
+        return (
+            <div className="container px-4 py-8 mx-auto">
+                <div className="max-w-md mx-auto text-center">
+                    <div className="p-8 bg-white rounded-lg shadow-lg">
+                        <FaLock className="mx-auto mb-4 text-6xl text-gray-400" />
+                        <h2 className="mb-4 text-2xl font-bold text-gray-800">
+                            Acceso Restringido
+                        </h2>
+                        <p className="mb-6 text-gray-600">
+                            Para acceder a los informes de tu portafolio, necesitas iniciar sesión en tu cuenta.
+                        </p>
+                        <div className="space-y-3">
+                            <Link 
+                                to="/login" 
+                                className="flex items-center justify-center w-full px-6 py-3 text-white transition-colors bg-blue-600 rounded-lg hover:bg-blue-700"
+                            >
+                                <FaSignInAlt className="mr-2" />
+                                Iniciar Sesión
+                            </Link>
+                            <Link 
+                                to="/register" 
+                                className="flex items-center justify-center w-full px-6 py-3 text-blue-600 transition-colors border border-blue-600 rounded-lg hover:bg-blue-50"
+                            >
+                                Crear Cuenta
+                            </Link>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        );
+    }
 
             return (
             <div className="min-h-screen text-white bg-gray-900">

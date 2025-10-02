@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useEffect, useState } from "react";
 import { withBase } from '../services/api';
+import { Link } from 'react-router-dom';
 import {
   PieChart,
   Pie,
@@ -14,7 +15,7 @@ import {
   YAxis,
   CartesianGrid
 } from "recharts";
-import { FaChartPie, FaInfoCircle, FaArrowUp, FaArrowDown, FaMedal } from 'react-icons/fa';
+import { FaChartPie, FaInfoCircle, FaArrowUp, FaArrowDown, FaMedal, FaLock, FaSignInAlt } from 'react-icons/fa';
 import { RiStockLine, RiBankLine, RiMoneyDollarCircleLine, RiBitCoinLine, RiPieChart2Line, RiFundsLine } from 'react-icons/ri';
 import financeBg from '../assets/img/finance55.jpg';
 
@@ -22,9 +23,12 @@ const FONT_FAMILY = "Inter, Roboto, Arial, sans-serif";
 const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#A28CFE', '#FF6699'];
 
 export const Stadistics = () => {
+  // Verificar autenticación primero
+  const isAuthenticated = !!localStorage.getItem('token');
+  
   const [stats, setStats] = useState<any>(null);
   const [loading, setLoading] = useState(true);
-
+  
   const [performance, setPerformance] = useState<any[]>([]);
   const [date, setDate] = useState<string>(new Date().toISOString().slice(0, 10));
 
@@ -60,6 +64,11 @@ export const Stadistics = () => {
   };
 
   useEffect(() => {
+    if (!isAuthenticated) {
+      setLoading(false);
+      return;
+    }
+    
     const fetchStats = async () => {
       const userId = localStorage.getItem("userId");
       const token = localStorage.getItem("token");
@@ -79,9 +88,11 @@ export const Stadistics = () => {
       setLoading(false);
     };
     fetchStats();
-  }, []);
+  }, [isAuthenticated]);
 
   useEffect(() => {
+    if (!isAuthenticated) return;
+    
     const fetchPerformance = async () => {
       const userId = localStorage.getItem("userId");
       const token = localStorage.getItem("token");
@@ -96,9 +107,11 @@ export const Stadistics = () => {
       }
     };
     fetchPerformance();
-  }, [date]);
+  }, [date, isAuthenticated]);
 
   useEffect(() => {
+    if (!isAuthenticated) return;
+    
     const fetchHistory = async () => {
       const userId = localStorage.getItem("userId");
       const token = localStorage.getItem("token");
@@ -140,9 +153,11 @@ export const Stadistics = () => {
       }
     };
     fetchHistory();
-  }, [from, to]);
+  }, [from, to, isAuthenticated]);
 
   useEffect(() => {
+    if (!isAuthenticated) return;
+    
     const fetchCurrentPerformance = async () => {
       const userId = localStorage.getItem("userId");
       const token = localStorage.getItem("token");
@@ -157,9 +172,11 @@ export const Stadistics = () => {
       }
     };
     fetchCurrentPerformance();
-  }, []);
+  }, [isAuthenticated]);
 
   useEffect(() => {
+    if (!isAuthenticated) return;
+    
     const fetchPortfolio = async () => {
       const token = localStorage.getItem("token");
       if (!token) return;
@@ -173,7 +190,7 @@ export const Stadistics = () => {
       }
     };
     fetchPortfolio();
-  }, []);
+  }, [isAuthenticated]);
 
   useEffect(() => {
     if (!portfolioItems || portfolioItems.length === 0) {
@@ -230,6 +247,40 @@ export const Stadistics = () => {
 
   const rankedAssets: any[] = Array.isArray(stats?.rankedAssets) ? stats.rankedAssets : [];
   const maxRankValue = rankedAssets.reduce((m, it) => Math.max(m, Number(it.totalValue || 0)), 0) || 1;
+
+  // Si no está autenticado, mostrar mensaje de login
+  if (!isAuthenticated) {
+    return (
+      <div className="container px-4 py-8 mx-auto">
+        <div className="max-w-md mx-auto text-center">
+          <div className="p-8 bg-white rounded-lg shadow-lg">
+            <FaLock className="mx-auto mb-4 text-6xl text-gray-400" />
+            <h2 className="mb-4 text-2xl font-bold text-gray-800">
+              Acceso Restringido
+            </h2>
+            <p className="mb-6 text-gray-600">
+              Para acceder a las estadísticas de tu portafolio, necesitas iniciar sesión en tu cuenta.
+            </p>
+            <div className="space-y-3">
+              <Link 
+                to="/login" 
+                className="flex items-center justify-center w-full px-6 py-3 text-white transition-colors bg-blue-600 rounded-lg hover:bg-blue-700"
+              >
+                <FaSignInAlt className="mr-2" />
+                Iniciar Sesión
+              </Link>
+              <Link 
+                to="/register" 
+                className="flex items-center justify-center w-full px-6 py-3 text-blue-600 transition-colors border border-blue-600 rounded-lg hover:bg-blue-50"
+              >
+                Crear Cuenta
+              </Link>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   if (loading) return (
     <div className="max-w-5xl p-6 mx-auto rounded-xl" style={{ fontFamily: FONT_FAMILY }}>

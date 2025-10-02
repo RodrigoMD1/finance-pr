@@ -4,12 +4,15 @@ import { PortfolioItem } from "../types/PortfolioItem";
 import { fetchWithAuth } from '../utils/auth';
 import { useSubscriptionLimits } from '../hooks/useSubscriptionLimits';
 import { SubscriptionBanner } from './SubscriptionBanner';
-import { FaChartLine, FaWallet, FaChartBar, FaDollarSign } from 'react-icons/fa';
+import { FaChartLine, FaWallet, FaChartBar, FaDollarSign, FaLock, FaSignInAlt } from 'react-icons/fa';
 import { Link } from 'react-router-dom';
 import toast from 'react-hot-toast';
 import { withBase } from '../services/api';
 
 export const Finance = () => {
+  // Verificar autenticación ANTES de hooks (para early return correcto)
+  const isAuthenticated = !!localStorage.getItem('token');
+  
   const [portfolio, setPortfolio] = useState<PortfolioItem[]>([]);
   const { usage, checkAssetLimit, refreshUsage } = useSubscriptionLimits();
 
@@ -102,8 +105,9 @@ export const Finance = () => {
     }, []);
 
   useEffect(() => {
+    if (!isAuthenticated) return;
     fetchPortfolio();
-  }, [fetchPortfolio]);
+  }, [fetchPortfolio, isAuthenticated]);
 
   const handleDeleteItem = async (id: number) => {
     try {
@@ -207,6 +211,40 @@ export const Finance = () => {
   const totalValue = portfolio.reduce((sum, item) => sum + (item.cantidad * item.precio), 0);
   const totalAssets = portfolio.length;
   const assetTypes = [...new Set(portfolio.map(item => item.tipoActivo))].length;
+
+  // Si no está autenticado, mostrar mensaje de login
+  if (!isAuthenticated) {
+    return (
+      <div className="container px-4 py-8 mx-auto">
+        <div className="max-w-md mx-auto text-center">
+          <div className="p-8 bg-white rounded-lg shadow-lg">
+            <FaLock className="mx-auto mb-4 text-6xl text-gray-400" />
+            <h2 className="mb-4 text-2xl font-bold text-gray-800">
+              Acceso Restringido
+            </h2>
+            <p className="mb-6 text-gray-600">
+              Para acceder al portafolio de inversiones, necesitas iniciar sesión en tu cuenta.
+            </p>
+            <div className="space-y-3">
+              <Link 
+                to="/login" 
+                className="flex items-center justify-center w-full px-6 py-3 text-white transition-colors bg-blue-600 rounded-lg hover:bg-blue-700"
+              >
+                <FaSignInAlt className="mr-2" />
+                Iniciar Sesión
+              </Link>
+              <Link 
+                to="/register" 
+                className="flex items-center justify-center w-full px-6 py-3 text-blue-600 transition-colors border border-blue-600 rounded-lg hover:bg-blue-50"
+              >
+                Crear Cuenta
+              </Link>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen w-full overflow-x-hidden bg-gradient-to-br from-industrial-charcoal via-industrial-iron to-industrial-charcoal">

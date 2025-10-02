@@ -1,0 +1,28 @@
+# Finance PR - robots.txt
+# https://financepr.netlify.app/robots.txt
+
+User-agent: *
+Allow: /
+Allow: /inicio
+Allow: /login
+Allow: /register
+Allow: /finance
+Allow: /stadistics
+Allow: /reports
+Allow: /subscriptions
+Allow: /educacion
+Allow: /news
+Allow: /manual
+
+# Disallow private pages
+Disallow: /admin
+Disallow: /settings
+Disallow: /api
+Disallow: /*.json$
+Disallow: /fix-roles
+
+# Crawl-delay
+Crawl-delay: 1
+
+# Sitemap location
+Sitemap: https://financepr.netlify.app/sitemap.xml

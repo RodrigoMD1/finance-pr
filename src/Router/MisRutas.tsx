@@ -60,11 +60,11 @@ export const MisRutas = () => {
             <Routes>
                 <Route path='/' element={<Inicio />} />
                 <Route path='/inicio' element={<Inicio />} />
-                <Route path='/finance' element={isAuthenticated ? <Finance /> : <Inicio />} />
-                <Route path='/stadistics' element={isAuthenticated ? <Stadistics /> : <Inicio />} />
+                <Route path='/finance' element={<Finance />} />
+                <Route path='/stadistics' element={<Stadistics />} />
                 <Route path='/settings' element={isAuthenticated ? <UserSettings /> : <Inicio />} />
                 <Route path='/verify-email' element={<VerifyEmail />} />
-                <Route path='/reports' element={isAuthenticated ? <Reports /> : <Inicio />} />
+                <Route path='/reports' element={<Reports />} />
                 <Route path="/login" element={<Login onLoginSuccess={() => { /* navigation handled in component */ }} />} />
                 <Route path="/register" element={<Register />} />
 
