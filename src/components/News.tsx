@@ -14,6 +14,58 @@ type NewsItem = {
 
 type TabType = 'all' | 'AR' | 'US';
 
+// Datos de fallback en caso de error de API (fuera del componente para evitar re-renders)
+const fallbackNews: NewsItem[] = [
+  {
+    title: "Dólar blue hoy: cotización y tendencias del mercado paralelo",
+    url: "https://www.ambito.com/contenidos/dolar.html",
+    publishedAt: new Date().toISOString(),
+    source: { name: "Ámbito Financiero" },
+    description: "Seguimiento del tipo de cambio del dólar paralelo y su impacto en la economía argentina. Análisis de la brecha cambiaria y perspectivas del mercado.",
+    country: 'AR'
+  },
+  {
+    title: "Merval: el índice líder de la bolsa argentina cierra con tendencia alcista", 
+    url: "https://www.cronista.com/finanzas-mercados/merval/",
+    publishedAt: new Date(Date.now() - 3600000).toISOString(),
+    source: { name: "El Cronista" },
+    description: "El índice Merval registra movimientos significativos impulsado por acciones bancarias y empresas ligadas al dólar. Análisis del mercado bursátil local.",
+    country: 'AR'
+  },
+  {
+    title: "Bitcoin supera expectativas: análisis del mercado cripto 2025",
+    url: "https://www.infobae.com/economia/criptomonedas/",
+    publishedAt: new Date(Date.now() - 7200000).toISOString(),
+    source: { name: "Infobae" },
+    description: "Las criptomonedas continúan ganando adopción en Argentina como alternativa de inversión y reserva de valor frente a la inflación.",
+    country: 'AR'
+  },
+  {
+    title: "Tasas de plazo fijo: bancos actualizan rendimientos para ahorristas",
+    url: "https://www.lanacion.com.ar/economia/",
+    publishedAt: new Date(Date.now() - 10800000).toISOString(),
+    source: { name: "La Nación" },
+    description: "Comparativa de tasas de interés en plazos fijos tradicionales y UVA. Análisis de las mejores opciones para proteger el ahorro.",
+    country: 'AR'
+  },
+  {
+    title: "Inversiones: estrategias para diversificar tu cartera en el mercado argentino",
+    url: "https://www.cronista.com/finanzas-mercados/",
+    publishedAt: new Date(Date.now() - 14400000).toISOString(),
+    source: { name: "El Cronista" },
+    description: "Expertos analizan las mejores alternativas de inversión: bonos, acciones, CEDEARs y fondos comunes de inversión para diferentes perfiles de riesgo.",
+    country: 'AR'
+  },
+  {
+    title: "Reservas del Banco Central: evolución y perspectivas económicas",
+    url: "https://www.ambito.com/economia/",
+    publishedAt: new Date(Date.now() - 18000000).toISOString(),
+    source: { name: "Ámbito Financiero" },
+    description: "Seguimiento de las reservas internacionales del BCRA y su impacto en la estabilidad cambiaria y las perspectivas macroeconómicas del país.",
+    country: 'AR'
+  }
+];
+
 // Función para obtener icono según la fuente
 const getSourceIcon = (sourceName: string) => {
   const source = sourceName.toLowerCase();
@@ -80,21 +132,87 @@ const truncateText = (text: string, maxLength: number) => {
   return text.substring(0, maxLength).trim() + '...';
 };
 
-// Función para filtrar noticias irrelevantes (EXTREMADAMENTE LIGERA)
-const isRelevantNews = (article: NewsItem): boolean => {
-  const title = article.title.toLowerCase();
+// Función para normalizar texto (quitar acentos y símbolos)
+const normalizeText = (text: string): string => {
+  return text
+    .toLowerCase()
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '') // Quita acentos
+    .replace(/[^a-z0-9\s]/g, '') // Quita símbolos
+    .trim();
+};
+
+// Función para calcular similitud entre títulos (Levenshtein simplificado)
+const calculateSimilarity = (str1: string, str2: string): number => {
+  const s1 = normalizeText(str1);
+  const s2 = normalizeText(str2);
   
-  // Solo filtrar si el título LITERALMENTE es sobre quiniela
-  // Prácticamente no filtrar nada
-  const veryIrrelevantKeywords = [
-    'ganó la quiniela',
-    'ganador de la quiniela',
-    'resultado quiniela',
-    'horóscopo de hoy'
+  // Si son exactamente iguales
+  if (s1 === s2) return 1;
+  
+  // Contar palabras en común
+  const words1 = s1.split(' ').filter(w => w.length > 3);
+  const words2 = s2.split(' ').filter(w => w.length > 3);
+  
+  if (words1.length === 0 || words2.length === 0) return 0;
+  
+  const commonWords = words1.filter(word => words2.includes(word));
+  const similarity = (commonWords.length * 2) / (words1.length + words2.length);
+  
+  return similarity;
+};
+
+// Función para filtrar noticias irrelevantes (MEJORADA)
+const isRelevantNews = (article: NewsItem): boolean => {
+  const title = normalizeText(article.title);
+  const description = normalizeText(article.description || '');
+  
+  // Palabras clave irrelevantes (quiniela, deportes, entretenimiento, etc.)
+  const irrelevantKeywords = [
+    'quiniela', 'quinela', 'quini', 'sorteo',
+    'futbol', 'football', 'gol', 'partido', 'liga',
+    'horoscopo', 'signo', 'zodiaco',
+    'farándula', 'farandula', 'espectaculo', 'espectaculos',
+    'clima', 'tiempo', 'temperatura',
+    'receta', 'cocina', 'gastronomia',
+    'salud', 'enfermedad', 'medicina',
+    'cine', 'pelicula', 'serie', 'netflix',
+    'musica', 'concierto', 'cantante',
+    'deporte', 'racing', 'boca', 'river', 'independiente',
+    'tenis', 'rugby', 'formula 1', 'f1'
   ];
   
-  // Solo filtrar si contiene estas frases exactas
-  return !veryIrrelevantKeywords.some(keyword => title.includes(keyword));
+  // Si el título o descripción contiene palabras irrelevantes, filtrar
+  const hasIrrelevantContent = irrelevantKeywords.some(keyword => 
+    title.includes(keyword) || description.includes(keyword)
+  );
+  
+  if (hasIrrelevantContent) return false;
+  
+  // Palabras clave relevantes (economía, finanzas, inversiones)
+  const relevantKeywords = [
+    'dolar', 'peso', 'economia', 'finanzas', 'mercado',
+    'inversion', 'accion', 'bono', 'cedear',
+    'banco', 'bcra', 'fed', 'inflacion',
+    'bitcoin', 'cripto', 'blockchain',
+    'bolsa', 'merval', 'dow jones', 'nasdaq',
+    'tasa', 'interes', 'credito',
+    'empresa', 'negocio', 'startup',
+    'impuesto', 'fiscal', 'tributario'
+  ];
+  
+  // Si no tiene ninguna palabra relevante, es dudoso
+  const hasRelevantContent = relevantKeywords.some(keyword => 
+    title.includes(keyword) || description.includes(keyword)
+  );
+  
+  // Solo aceptar si tiene contenido relevante O si la fuente es financiera confiable
+  const trustedSources = ['cronista', 'ambito', 'infobae economia', 'bloomberg', 'reuters'];
+  const isTrustedSource = trustedSources.some(source => 
+    normalizeText(article.source.name).includes(source)
+  );
+  
+  return hasRelevantContent || isTrustedSource;
 };
 
 // Función para calcular score de relevancia (más ligera)
@@ -116,22 +234,44 @@ const getNewsRelevance = (article: NewsItem): number => {
   return score;
 };
 
-// Función para ordenar noticias (mantiene casi todas)
-const sortNewsByRelevance = (articles: NewsItem[]): NewsItem[] => {
-  return articles
-    .filter(isRelevantNews)  // Filtro MUY ligero ahora
-    .sort((a, b) => {
-      const scoreA = getNewsRelevance(a);
-      const scoreB = getNewsRelevance(b);
-      
-      // Si tienen diferentes scores, ordenar por score
-      if (scoreA !== scoreB) {
-        return scoreB - scoreA;
-      }
-      
-      // Si tienen el mismo score, ordenar por fecha (más recientes primero)
-      return new Date(b.publishedAt).getTime() - new Date(a.publishedAt).getTime();
+// Función para eliminar duplicados por similitud
+const removeDuplicates = (articles: NewsItem[]): NewsItem[] => {
+  const uniqueArticles: NewsItem[] = [];
+  const SIMILARITY_THRESHOLD = 0.7; // 70% de similitud = duplicado
+  
+  for (const article of articles) {
+    // Verificar si ya existe un artículo similar
+    const isDuplicate = uniqueArticles.some(existing => {
+      const similarity = calculateSimilarity(article.title, existing.title);
+      return similarity >= SIMILARITY_THRESHOLD;
     });
+    
+    if (!isDuplicate) {
+      uniqueArticles.push(article);
+    }
+  }
+  
+  return uniqueArticles;
+};
+
+// Función para ordenar noticias (mejorada con eliminación de duplicados)
+const sortNewsByRelevance = (articles: NewsItem[]): NewsItem[] => {
+  return removeDuplicates(
+    articles
+      .filter(isRelevantNews)  // Filtrar noticias irrelevantes
+      .sort((a, b) => {
+        const scoreA = getNewsRelevance(a);
+        const scoreB = getNewsRelevance(b);
+        
+        // Si tienen diferentes scores, ordenar por score
+        if (scoreA !== scoreB) {
+          return scoreB - scoreA;
+        }
+        
+        // Si tienen el mismo score, ordenar por fecha (más recientes primero)
+        return new Date(b.publishedAt).getTime() - new Date(a.publishedAt).getTime();
+      })
+  );
 };
 
 export const News = () => {
@@ -144,52 +284,6 @@ export const News = () => {
   const [totalByCountry, setTotalByCountry] = useState({ argentina: 0, usa: 0 });  // ← NUEVO
   const [lastUpdate, setLastUpdate] = useState<Date>(new Date());  // ← Para mostrar última actualización
   const [showUpdateNotification, setShowUpdateNotification] = useState(false);  // ← Notificación de actualización
-
-  // Datos de fallback en caso de error de API
-  const fallbackNews: NewsItem[] = [
-    {
-      title: "Dólar blue hoy: cotización y tendencias del mercado paralelo",
-      url: "https://www.ambito.com/contenidos/dolar.html",
-      publishedAt: new Date().toISOString(),
-      source: { name: "Ámbito Financiero" },
-      description: "Seguimiento del tipo de cambio del dólar paralelo y su impacto en la economía argentina. Análisis de la brecha cambiaria y perspectivas del mercado."
-    },
-    {
-      title: "Merval: el índice líder de la bolsa argentina cierra con tendencia alcista", 
-      url: "https://www.cronista.com/finanzas-mercados/merval/",
-      publishedAt: new Date(Date.now() - 3600000).toISOString(),
-      source: { name: "El Cronista" },
-      description: "El índice Merval registra movimientos significativos impulsado por acciones bancarias y empresas ligadas al dólar. Análisis del mercado bursátil local."
-    },
-    {
-      title: "Bitcoin supera expectativas: análisis del mercado cripto 2025",
-      url: "https://www.infobae.com/economia/criptomonedas/",
-      publishedAt: new Date(Date.now() - 7200000).toISOString(),
-      source: { name: "Infobae" },
-      description: "Las criptomonedas continúan ganando adopción en Argentina como alternativa de inversión y reserva de valor frente a la inflación."
-    },
-    {
-      title: "Tasas de plazo fijo: bancos actualizan rendimientos para ahorristas",
-      url: "https://www.lanacion.com.ar/economia/",
-      publishedAt: new Date(Date.now() - 10800000).toISOString(),
-      source: { name: "La Nación" },
-      description: "Comparativa de tasas de interés en plazos fijos tradicionales y UVA. Análisis de las mejores opciones para proteger el ahorro."
-    },
-    {
-      title: "Inversiones: estrategias para diversificar tu cartera en el mercado argentino",
-      url: "https://www.cronista.com/finanzas-mercados/",
-      publishedAt: new Date(Date.now() - 14400000).toISOString(),
-      source: { name: "El Cronista" },
-      description: "Expertos analizan las mejores alternativas de inversión: bonos, acciones, CEDEARs y fondos comunes de inversión para diferentes perfiles de riesgo."
-    },
-    {
-      title: "Reservas del Banco Central: evolución y perspectivas económicas",
-      url: "https://www.ambito.com/economia/",
-      publishedAt: new Date(Date.now() - 18000000).toISOString(),
-      source: { name: "Ámbito Financiero" },
-      description: "Seguimiento de las reservas internacionales del BCRA y su impacto en la estabilidad cambiaria y las perspectivas macroeconómicas del país."
-    }
-  ];
 
   // Función para cargar noticias (reutilizable)
   const fetchNews = useCallback(async (showNotification = false) => {
@@ -215,11 +309,6 @@ export const News = () => {
         // Guardar todas las noticias y contadores
         if (data.articles && Array.isArray(data.articles) && data.articles.length > 0) {
           setAllNews(data.articles);
-          const sorted = sortNewsByRelevance(data.articles);
-          console.log(`✅ Noticias cargadas del backend - Total: ${data.articles.length}/${data.total || 'N/A'}`);
-          console.log(`📊 Por país - AR: ${data.articles.filter((n: NewsItem) => n.country === 'AR').length}, US: ${data.articles.filter((n: NewsItem) => n.country === 'US').length}`);
-          console.log(`🎯 Después del filtro de relevancia: ${sorted.length} noticias mostradas`);
-          setNews(sorted);
           setApiError(false);
           
           // Guardar contadores si vienen del backend
@@ -232,9 +321,6 @@ export const News = () => {
         } else if (Array.isArray(data) && data.length > 0) {
           // Caso alternativo: la API podría devolver el array directamente
           setAllNews(data);
-          const sorted = sortNewsByRelevance(data);
-          console.log(`✅ Noticias cargadas (formato alternativo) - Total: ${data.length}, Mostradas: ${sorted.length}`);
-          setNews(sorted);
           setApiError(false);
           
           // Calcular contadores manualmente
@@ -244,9 +330,6 @@ export const News = () => {
         } else {
           // El backend responde pero no tiene noticias, usar fallback
           setAllNews(fallbackNews);
-          const sorted = sortNewsByRelevance(fallbackNews);
-          console.log(`Usando fallback - Total: ${fallbackNews.length}, Después de filtro: ${sorted.length}`);
-          setNews(sorted);
           setApiError(true);
           setErrorMessage('El servicio de noticias está temporalmente no disponible. Mostrando contenido de ejemplo.');
         }
@@ -276,7 +359,7 @@ export const News = () => {
         setShowUpdateNotification(true);
         setTimeout(() => setShowUpdateNotification(false), 3000); // Ocultar después de 3 segundos
       }
-    }, [fallbackNews]); // useCallback con fallbackNews
+    }, []); // useCallback sin dependencias externas
 
   // useEffect para carga inicial
   useEffect(() => {
@@ -286,40 +369,36 @@ export const News = () => {
   // useEffect para recarga automática cada 10 minutos
   useEffect(() => {
     const interval = setInterval(() => {
-      console.log('🔄 Actualizando noticias automáticamente...');
       fetchNews(true); // Recarga con notificación
     }, 10 * 60 * 1000); // 10 minutos en milisegundos
 
     return () => clearInterval(interval); // Limpiar intervalo al desmontar
   }, [fetchNews]);
 
-  // Debug: Log cuando cambia el estado de news
-  useEffect(() => {
-    if (news.length > 0) {
-      console.log(`🎨 Tab "${activeTab}" - Mostrando ${news.length} noticias (Hero: 1, Secundarias: ${news.slice(1, 5).length}, Grid: ${news.slice(5).length})`);
-    }
-  }, [news, activeTab]);
-
   // Función para cambiar de tab
-  const handleTabChange = (tab: TabType) => {
+  const handleTabChange = useCallback((tab: TabType) => {
     setActiveTab(tab);
     
     if (tab === 'all') {
       const sorted = sortNewsByRelevance(allNews);
-      console.log(`🔄 Tab "Todas" - ${sorted.length} noticias`);
       setNews(sorted);
     } else if (tab === 'AR') {
       const filtered = allNews.filter(n => n.country === 'AR');
       const sorted = sortNewsByRelevance(filtered);
-      console.log(`🇦🇷 Tab "Argentina" - ${sorted.length} noticias`);
       setNews(sorted);
     } else if (tab === 'US') {
       const filtered = allNews.filter(n => n.country === 'US');
       const sorted = sortNewsByRelevance(filtered);
-      console.log(`🇺🇸 Tab "USA" - ${sorted.length} noticias`);
       setNews(sorted);
     }
-  };
+  }, [allNews]);
+
+  // Aplicar filtro cuando cambia allNews
+  useEffect(() => {
+    if (allNews.length > 0) {
+      handleTabChange(activeTab);
+    }
+  }, [allNews, activeTab, handleTabChange]);
 
   if (loading) {
     return (
@@ -487,8 +566,44 @@ export const News = () => {
             <article className={`lg:col-span-2 lg:row-span-2 glass-effect rounded-2xl border ${getBorderColor(news[0].country)} overflow-hidden transition-all duration-500 group cursor-pointer shadow-2xl hover:shadow-3xl hover:scale-[1.02] animate-fade-in`}>
               <a href={news[0].url} target="_blank" rel="noopener noreferrer" className="block h-full">
                 {/* Imagen o gradiente de fondo */}
-                <div className={`relative h-64 lg:h-80 bg-gradient-to-br ${getCardGradient(news[0].country, true)} overflow-hidden`}>
-                  <div className="absolute inset-0 bg-gradient-to-t from-industrial-charcoal/90 via-industrial-charcoal/50 to-transparent" />
+                <div className={`relative h-64 lg:h-80 overflow-hidden`}>
+                  {/* Imagen de fondo */}
+                  {news[0].image ? (
+                    <>
+                      <img 
+                        src={news[0].image} 
+                        alt={news[0].title}
+                        className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                        onError={(e) => {
+                          // Fallback a gradiente si la imagen falla
+                          e.currentTarget.style.display = 'none';
+                          const parent = e.currentTarget.parentElement;
+                          if (parent) {
+                            parent.classList.add('bg-gradient-to-br', getCardGradient(news[0].country, true));
+                          }
+                        }}
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-industrial-charcoal/95 via-industrial-charcoal/60 to-transparent" />
+                    </>
+                  ) : (
+                    <>
+                      {/* Fallback: Imagen de Unsplash relacionada con finanzas */}
+                      <img 
+                        src={`https://images.unsplash.com/photo-${news[0].country === 'AR' ? '1611974789855-9c2a0a7236a3' : '1590283603385-17ffb3a7f29f'}?w=800&h=600&fit=crop&q=80`}
+                        alt="Finanzas"
+                        className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                        onError={(e) => {
+                          // Si Unsplash falla, usar gradiente
+                          e.currentTarget.style.display = 'none';
+                          const parent = e.currentTarget.parentElement;
+                          if (parent) {
+                            parent.classList.add('bg-gradient-to-br', getCardGradient(news[0].country, true));
+                          }
+                        }}
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-industrial-charcoal/95 via-industrial-charcoal/60 to-transparent" />
+                    </>
+                  )}
                   
                   {/* Badge de país - Nuevo */}
                   <div className="absolute top-4 right-4">
@@ -536,8 +651,47 @@ export const News = () => {
           {news.slice(1, 5).map((item, idx) => (
             <article key={idx + 1} className={`glass-effect rounded-xl border ${getBorderColor(item.country)} overflow-hidden transition-all duration-500 group cursor-pointer shadow-lg hover:shadow-2xl hover:scale-105 animate-fade-in`} style={{animationDelay: `${idx * 100}ms`}}>
               <a href={item.url} target="_blank" rel="noopener noreferrer" className="block h-full">
-                <div className={`relative h-32 bg-gradient-to-br ${getCardGradient(item.country, false)}`}>
-                  <div className="absolute inset-0 bg-gradient-to-t from-industrial-charcoal/80 via-industrial-charcoal/40 to-transparent" />
+                <div className="relative h-32 overflow-hidden">
+                  {/* Imagen de fondo */}
+                  {item.image ? (
+                    <>
+                      <img 
+                        src={item.image} 
+                        alt={item.title}
+                        className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                        onError={(e) => {
+                          e.currentTarget.style.display = 'none';
+                          const parent = e.currentTarget.parentElement;
+                          if (parent) {
+                            parent.classList.add('bg-gradient-to-br', getCardGradient(item.country, false));
+                          }
+                        }}
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-industrial-charcoal/85 via-industrial-charcoal/50 to-transparent" />
+                    </>
+                  ) : (
+                    <>
+                      {/* Imágenes de Unsplash diferentes para variedad */}
+                      <img 
+                        src={`https://images.unsplash.com/photo-${[
+                          '1590283603385-17ffb3a7f29f', // mercado de valores
+                          '1611974789855-9c2a0a7236a3', // trading
+                          '1559526324-4b87b5e36e44', // monedas
+                          '1579621970563-ebec7560ff3e'  // finanzas
+                        ][idx % 4]}?w=400&h=300&fit=crop&q=80`}
+                        alt="Finanzas"
+                        className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                        onError={(e) => {
+                          e.currentTarget.style.display = 'none';
+                          const parent = e.currentTarget.parentElement;
+                          if (parent) {
+                            parent.classList.add('bg-gradient-to-br', getCardGradient(item.country, false));
+                          }
+                        }}
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-industrial-charcoal/85 via-industrial-charcoal/50 to-transparent" />
+                    </>
+                  )}
                   
                   {/* Badge de país - esquina superior derecha */}
                   <div className="absolute top-2 right-2 scale-75 origin-top-right">
